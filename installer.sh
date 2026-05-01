@@ -193,6 +193,10 @@ FLAKE
 
 info "Generated flake.nix at ${BUILD_DIR}/flake.nix"
 
+# Initialize git repo so Nix can compute consistent hashes
+git init -q "${BUILD_DIR}"
+git -C "${BUILD_DIR}" add flake.nix
+
 # --- Partition and install ---
 
 header "Partitioning ${DISK_DEVICE}..."

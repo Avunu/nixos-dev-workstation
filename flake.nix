@@ -366,7 +366,7 @@
                 unitConfig.ConditionPathExists = "!/var/lib/swapfile";
                 serviceConfig.Type = "oneshot";
                 script = ''
-                  fallocate -l ${toString (16 * 1024)}M /var/lib/swapfile
+                  fallocate -l 16G /var/lib/swapfile
                   f2fs_io pin set 1 /var/lib/swapfile
                   chmod 600 /var/lib/swapfile
                   mkswap /var/lib/swapfile

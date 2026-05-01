@@ -132,7 +132,7 @@ fi
 header "Generating configuration..."
 
 BUILD_DIR=$(mktemp -d)
-trap "rm -rf $BUILD_DIR" EXIT
+trap 'rm -rf "$BUILD_DIR"' EXIT
 
 # Build SSH keys nix list
 SSH_KEYS_NIX=""

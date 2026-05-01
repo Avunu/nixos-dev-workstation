@@ -125,7 +125,7 @@ deploy_local() {
   # Generate a temporary flake that references the remote module with the correct disk device
   local build_dir
   build_dir=$(mktemp -d)
-  trap "rm -rf $build_dir" EXIT
+  trap 'rm -rf "$build_dir"' EXIT
 
   cp flake.nix "${build_dir}/flake.nix"
 

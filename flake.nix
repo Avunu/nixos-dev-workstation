@@ -201,6 +201,7 @@
                   (python3.withPackages (ps: with ps; [ uv ]))
                   [
                     appimage-run
+                    beeper
                     bitwarden-desktop
                     bun
                     docker-compose
@@ -211,7 +212,7 @@
                     gnome-disk-utility
                     google-chrome
                     inkscape
-                    libreoffice-qt6-fresh
+                    libreoffice-fresh
                     nixfmt
                     obsidian
                     podman-compose

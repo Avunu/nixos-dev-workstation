@@ -8,11 +8,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-micro-desktop = {
-      url = "github:Avunu/nixos-micro-desktop";
+      url = "github:Avunu/nixos-micro-desktop/niri";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    rclone-nixos-module = {
-      url = "github:Avunu/rclone-nixos-module";
+    nixos-rclone = {
+      url = "github:Avunu/nixos-rclone";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -67,7 +67,7 @@
         {
           imports = [
             inputs.nixos-micro-desktop.nixosModules.microDesktop
-            inputs.rclone-nixos-module.nixosModules.default
+            inputs.nixos-rclone.nixosModules.default
             inputs.agenix.nixosModules.default
           ];
 

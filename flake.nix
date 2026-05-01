@@ -156,6 +156,8 @@
             #   };
             # };
 
+            boot.plymouth.logo = ./logo.png;
+
             # services.rclone-remotes = {
             #   enable = true;
             #   defaultConfigFile = config.age.secrets.rclone.path;

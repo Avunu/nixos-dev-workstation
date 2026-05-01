@@ -15,7 +15,7 @@
     }:
     let
       hostName = "dev-workstation";
-      username = "dylan";
+      username = "developer";
       system = "x86_64-linux";
     in
     {

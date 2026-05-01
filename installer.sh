@@ -35,8 +35,8 @@ if [ -z "$HOSTNAME" ]; then
 fi
 
 # Username
-read -rp "Username [dylan]: " USERNAME
-USERNAME="${USERNAME:-dylan}"
+read -rp "Username [developer]: " USERNAME
+USERNAME="${USERNAME:-developer}"
 
 # Initial password
 read -rp "Initial password [password]: " INITIAL_PASSWORD

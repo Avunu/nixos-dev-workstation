@@ -7,8 +7,8 @@ usage() {
   echo "  Local install:  $0 local <disk-device> [username]"
   echo ""
   echo "Examples:"
-  echo "  $0 remote dev-workstation.local 192.168.1.100 dylan"
-  echo "  $0 local /dev/sda dylan"
+  echo "  $0 remote dev-workstation.local 192.168.1.100 developer"
+  echo "  $0 local /dev/sda developer"
   echo ""
   echo "Local mode is for running from a NixOS live boot disk to install"
   echo "onto the machine you're currently on."
@@ -42,7 +42,7 @@ get_agenix_key() {
 deploy_remote() {
   local FQDN="${1:-}"
   local IP_ADDRESS="${2:-}"
-  local USERNAME="${3:-dylan}"
+  local USERNAME="${3:-developer}"
 
   if [ -z "$FQDN" ] || [ -z "$IP_ADDRESS" ]; then
     usage
@@ -84,7 +84,7 @@ deploy_remote() {
 
 deploy_local() {
   local DISK_DEVICE="${1:-}"
-  local USERNAME="${2:-dylan}"
+  local USERNAME="${2:-developer}"
 
   if [ -z "$DISK_DEVICE" ]; then
     usage
@@ -134,7 +134,7 @@ deploy_local() {
   # Update hostname
   sed -i "s|hostName = \"dev-workstation\"|hostName = \"${HOSTNAME}\"|" "${build_dir}/flake.nix"
   # Update username
-  sed -i "s|username = \"dylan\"|username = \"${USERNAME}\"|" "${build_dir}/flake.nix"
+  sed -i "s|username = \"developer\"|username = \"${USERNAME}\"|" "${build_dir}/flake.nix"
 
   # Run disko to partition and format
   nix run github:nix-community/disko -- \

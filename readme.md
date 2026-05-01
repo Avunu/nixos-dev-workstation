@@ -146,7 +146,7 @@ cd local/
 
 **Example:**
 ```bash
-./deploy.sh remote dev-workstation.local 192.168.1.100 dylan
+./deploy.sh remote dev-workstation.local 192.168.1.100 developer
 ```
 
 **What happens:**

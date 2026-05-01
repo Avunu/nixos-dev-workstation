@@ -175,6 +175,9 @@
                 nix-direnv.enable = true;
                 enableBashIntegration = true;
               };
+              fuse = {
+                enable = true;
+              };
               git = {
                 enable = true;
                 config.safe.directory = [ "/etc/nixos" ];

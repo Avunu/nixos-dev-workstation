@@ -8,7 +8,7 @@ usage() {
   echo ""
   echo "Examples:"
   echo "  $0 remote dev-workstation.local 192.168.1.100 developer"
-  echo "  $0 local /dev/sda developer"
+  echo "  $0 local /dev/nvme0n1 developer"
   echo ""
   echo "Local mode is for running from a NixOS live boot disk to install"
   echo "onto the machine you're currently on."
@@ -130,7 +130,7 @@ deploy_local() {
   cp flake.nix "${build_dir}/flake.nix"
 
   # Update diskDevice in the flake to match the target
-  sed -i "s|diskDevice = \"/dev/sda\"|diskDevice = \"${DISK_DEVICE}\"|" "${build_dir}/flake.nix"
+  sed -i "s|diskDevice = \"/dev/nvme0n1\"|diskDevice = \"${DISK_DEVICE}\"|" "${build_dir}/flake.nix"
   # Update hostname
   sed -i "s|hostName = \"dev-workstation\"|hostName = \"${HOSTNAME}\"|" "${build_dir}/flake.nix"
   # Update username

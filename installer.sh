@@ -67,8 +67,8 @@ echo ""
 info "Available block devices:"
 lsblk -d -o NAME,SIZE,MODEL,TYPE | grep -E "disk"
 echo ""
-read -rp "Target disk device [/dev/sda]: " DISK_DEVICE
-DISK_DEVICE="${DISK_DEVICE:-/dev/sda}"
+read -rp "Target disk device [/dev/nvme0n1]: " DISK_DEVICE
+DISK_DEVICE="${DISK_DEVICE:-/dev/nvme0n1}"
 
 if [ ! -b "$DISK_DEVICE" ]; then
   error "$DISK_DEVICE is not a block device."

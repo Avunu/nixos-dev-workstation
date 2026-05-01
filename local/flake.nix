@@ -28,7 +28,7 @@
             {
               devWorkstation = {
                 hostName = hostName;
-                diskDevice = "/dev/sda";
+                diskDevice = "/dev/nvme0n1";
                 bootMode = "uefi";
                 timeZone = "America/New_York";
                 locale = "en_US.UTF-8";

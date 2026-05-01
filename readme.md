@@ -74,7 +74,7 @@ Copy `local/flake.nix` and customize it for your machine:
           {
             devWorkstation = {
               hostName = hostName;
-              diskDevice = "/dev/sda";        # Target disk
+              diskDevice = "/dev/nvme0n1";        # Target disk
               bootMode = "uefi";              # "uefi" or "legacy"
               timeZone = "America/New_York";
               locale = "en_US.UTF-8";
@@ -101,7 +101,7 @@ Copy `local/flake.nix` and customize it for your machine:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `hostName` | string | (required) | System hostname |
-| `diskDevice` | string | `/dev/sda` | Target disk for disko partitioning |
+| `diskDevice` | string | `/dev/nvme0n1` | Target disk for disko partitioning |
 | `bootMode` | enum | `"uefi"` | `"uefi"` (systemd-boot) or `"legacy"` (GRUB) |
 | `timeZone` | string | `"America/New_York"` | System timezone |
 | `locale` | string | `"en_US.UTF-8"` | System locale |

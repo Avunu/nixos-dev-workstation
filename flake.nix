@@ -78,7 +78,7 @@
             };
             diskDevice = mkOption {
               type = types.str;
-              default = "/dev/sda";
+              default = "/dev/nvme0n1";
               description = "Disk device for installation";
             };
             bootMode = mkOption {

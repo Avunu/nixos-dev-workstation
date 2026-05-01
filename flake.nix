@@ -156,7 +156,7 @@
             #   };
             # };
 
-            boot.plymouth.logo = ./logo.png;
+            boot.plymouth.logo = ${./logo.png};
 
             # services.rclone-remotes = {
             #   enable = true;
@@ -204,6 +204,9 @@
                 with pkgs;
                 lib.flatten [
                   (python3.withPackages (ps: with ps; [ uv ]))
+                  (pkgs.runCommand "custom-distro-icon" { } ''
+                    install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
+                  '')
                   [
                     appimage-run
                     beeper

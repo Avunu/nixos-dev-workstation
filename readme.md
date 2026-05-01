@@ -4,14 +4,14 @@ A reusable NixOS module for Avunu development workstations. Builds on top of [ni
 
 ## What's Included
 
-- **Desktop environment**: Full niri Wayland desktop via nixos-micro-desktop (DMS Shell, Nautilus, GNOME services, XDG portals, fonts, theming)
-- **Development tools**: VS Code, GitHub Desktop, Git, Bun, Docker Compose, Podman Desktop, nixfmt, Python with uv
-- **Productivity**: Google Chrome, LibreOffice, Obsidian, Inkscape, GIMP, VLC
-- **Containers**: Podman with Docker compatibility (dockerCompat + socket)
-- **File sync**: Bidirectional sync from `vivobox:client` to `~/Clients` via rclone bisync
-- **Secrets**: Agenix for encrypted credentials (rclone config)
-- **SSH**: Bitwarden SSH agent socket pre-configured
-- **System management**: direnv + nix-direnv, nix-ld, AppImage support, auto-upgrade with hourly flake updates
+-   **Desktop environment**: Full niri Wayland desktop via nixos-micro-desktop (DMS Shell, Nautilus, GNOME services, XDG portals, fonts, theming)
+-   **Development tools**: VS Code, GitHub Desktop, Git, Bun, Docker Compose, Podman Desktop, nixfmt, Python with uv
+-   **Productivity**: Google Chrome, LibreOffice, Obsidian, Inkscape, GIMP, VLC
+-   **Containers**: Podman with Docker compatibility (dockerCompat + socket)
+-   **File sync**: Incorporates the rclone bisync module for file share sync and mount
+-   **Secrets**: Enables Agenix for encrypted credentials (such as rclone config)
+-   **SSH**: Bitwarden SSH agent socket pre-configured
+-   **System management**: direnv + nix-direnv, nix-ld, AppImage support
 
 ## Repository Structure
 
@@ -39,14 +39,14 @@ The interactive installer will prompt for all configuration values (hostname, us
 
 ## Prerequisites
 
-- A machine with Nix installed (for remote deployment) or a NixOS live boot USB (for local installation)
-- The age private key for decrypting secrets
-- SSH access to the target machine (for remote deployment)
-- The target machine must be booted into a Linux environment accessible via SSH (remote) or directly (local)
+-   A machine with Nix installed (for remote deployment) or a NixOS live boot USB (for local installation)
+-   The age private key for decrypting secrets
+-   SSH access to the target machine (for remote deployment)
+-   The target machine must be booted into a Linux environment accessible via SSH (remote) or directly (local)
 
 ## Configuration
 
-### 1. Create Your Local Flake
+### 1\. Create Your Local Flake
 
 Copy `local/flake.nix` and customize it for your machine:
 
@@ -96,21 +96,21 @@ Copy `local/flake.nix` and customize it for your machine:
 }
 ```
 
-### 2. Module Options
+### 2\. Module Options
 
 | Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `hostName` | string | (required) | System hostname |
-| `diskDevice` | string | `/dev/nvme0n1` | Target disk for disko partitioning |
-| `bootMode` | enum | `"uefi"` | `"uefi"` (systemd-boot) or `"legacy"` (GRUB) |
-| `timeZone` | string | `"America/New_York"` | System timezone |
-| `locale` | string | `"en_US.UTF-8"` | System locale |
-| `username` | string | (required) | Primary user account name |
-| `initialPassword` | string | `"password"` | Initial user password |
-| `sshKeys` | list of strings | `[]` | SSH public keys for user and root |
-| `stateVersion` | string | `"25.11"` | NixOS state version |
-| `extraPackages` | list of packages | `[]` | Additional packages to install |
-| `enableVpn` | bool | `false` | Enable NetworkManager VPN plugins |
+| --- | --- | --- | --- |
+| hostName | string | (required) | System hostname |
+| diskDevice | string | /dev/nvme0n1 | Target disk for disko partitioning |
+| bootMode | enum | "uefi" | "uefi" (systemd-boot) or "legacy" (GRUB) |
+| timeZone | string | "America/New_York" | System timezone |
+| locale | string | "en_US.UTF-8" | System locale |
+| username | string | (required) | Primary user account name |
+| initialPassword | string | "password" | Initial user password |
+| sshKeys | list of strings | [] | SSH public keys for user and root |
+| stateVersion | string | "25.11" | NixOS state version |
+| extraPackages | list of packages | [] | Additional packages to install |
+| enableVpn | bool | false | Enable NetworkManager VPN plugins |
 
 ## Deployment
 
@@ -128,12 +128,13 @@ sudo nix --experimental-features 'nix-command flakes' run github:Avunu/nixos-dev
 ```
 
 The installer will:
-1. Prompt for hostname, username, password, timezone, locale, boot mode, disk, SSH keys, VPN, and agenix key
-2. Show a summary and ask for confirmation
-3. Partition and format the disk via disko
-4. Run `nixos-install`
-5. Place the flake and agenix key on the installed system
-6. Tell you to remove the USB and reboot
+
+1.  Prompt for hostname, username, password, timezone, locale, boot mode, disk, SSH keys, VPN, and agenix key
+2.  Show a summary and ask for confirmation
+3.  Partition and format the disk via disko
+4.  Run `nixos-install`
+5.  Place the flake and agenix key on the installed system
+6.  Tell you to remove the USB and reboot
 
 ### Remote Deployment (via nixos-anywhere)
 
@@ -145,23 +146,26 @@ cd local/
 ```
 
 **Example:**
+
 ```bash
 ./deploy.sh remote dev-workstation.local 192.168.1.100 developer
 ```
 
 **What happens:**
-1. The script looks for `./agenix-key`. If not found, it prompts you to paste the age private key.
-2. Copies `flake.nix` and the agenix key into a temporary directory.
-3. Runs `nixos-anywhere` which:
-   - SSHs into `root@<ip-address>`
-   - Partitions and formats the disk via disko
-   - Installs NixOS with your configuration
-   - Copies the extra files (flake + key) onto the new system
-4. The machine reboots into the new NixOS installation.
+
+1.  The script looks for `./agenix-key`. If not found, it prompts you to paste the age private key.
+2.  Copies `flake.nix` and the agenix key into a temporary directory.
+3.  Runs `nixos-anywhere` which:
+    -   SSHs into `root@<ip-address>`
+    -   Partitions and formats the disk via disko
+    -   Installs NixOS with your configuration
+    -   Copies the extra files (flake + key) onto the new system
+4.  The machine reboots into the new NixOS installation.
 
 **Requirements:**
-- SSH root access to the target machine (password or key-based)
-- The target must be in a bootable Linux state (NixOS installer ISO is ideal)
+
+-   SSH root access to the target machine (password or key-based)
+-   The target must be in a bootable Linux state (NixOS installer ISO is ideal)
 
 ### Local Deployment (via deploy.sh)
 
@@ -178,7 +182,7 @@ sudo ./deploy.sh local <disk-device> [username]
 
 ### Preparing a NixOS Live USB
 
-Download the NixOS minimal ISO from https://nixos.org/download and write it to a USB:
+Download the NixOS minimal ISO from [https://nixos.org/download](https://nixos.org/download) and write it to a USB:
 
 ```bash
 sudo dd if=nixos-minimal-*.iso of=/dev/sdX bs=4M status=progress
@@ -195,8 +199,9 @@ Each deployed machine needs the age private key at `/etc/agenix/key`. This key i
 **Where to get the key:** The age private key should be stored securely (e.g., in Bitwarden). It corresponds to one of the public keys listed in `secrets.nix`.
 
 **Providing the key during deployment:**
-- **Option A:** Place it as `local/agenix-key` before running `deploy.sh` (the file is gitignored)
-- **Option B:** Paste it interactively when the deploy script prompts
+
+-   **Option A:** Place it as `local/agenix-key` before running `deploy.sh` (the file is gitignored)
+-   **Option B:** Paste it interactively when the deploy script prompts
 
 ### Creating/Editing Secrets
 
@@ -211,34 +216,42 @@ This opens your `$EDITOR` with the decrypted content. Paste your rclone configur
 
 ### Adding More Secrets
 
-1. Add the secret definition to `secrets.nix`:
-   ```nix
-   "secrets/my-secret.age".publicKeys = allKeys;
-   ```
-2. Create the encrypted file:
-   ```bash
-   nix run github:ryantm/agenix -- -e secrets/my-secret.age
-   ```
-3. Reference it in `flake.nix`:
-   ```nix
-   age.secrets.my-secret.file = ./secrets/my-secret.age;
-   ```
+1.  Add the secret definition to `secrets.nix`:
+    
+    ```nix
+    "secrets/my-secret.age".publicKeys = allKeys;
+    ```
+    
+2.  Create the encrypted file:
+    
+    ```bash
+    nix run github:ryantm/agenix -- -e secrets/my-secret.age
+    ```
+    
+3.  Reference it in `flake.nix`:
+    
+    ```nix
+    age.secrets.my-secret.file = ./secrets/my-secret.age;
+    ```
+    
 
 ## Post-Installation
 
 ### First Login
 
-- Username and password are what you configured (`initialPassword`, default: `password`)
-- **Change your password immediately:** `passwd`
+-   Username and password are what you configured (`initialPassword`, default: `password`)
+-   **Change your password immediately:** `passwd`
 
 ### Auto-Updates
 
 The system automatically:
-- Updates flake inputs hourly (`flake-update.timer`)
-- Rebuilds and switches via `system.autoUpgrade` 
-- Reboots if needed between 01:00-05:00
+
+-   Updates flake inputs hourly (`flake-update.timer`)
+-   Rebuilds and switches via `system.autoUpgrade`
+-   Reboots if needed between 01:00-05:00
 
 To manually update:
+
 ```bash
 sudo nixos-rebuild switch --flake /etc/nixos --impure
 ```
@@ -253,6 +266,7 @@ journalctl --user -u rclone-bisync-clients
 ```
 
 If the first sync fails with a "bisync requires --resync" error, run once manually:
+
 ```bash
 rclone bisync ~/Clients vivobox:client --config /run/agenix/rclone --resync
 ```

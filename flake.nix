@@ -156,7 +156,7 @@
             #   };
             # };
 
-            boot.plymouth.logo = ${./logo.png};
+            boot.plymouth.logo = ./logo.png;
 
             # services.rclone-remotes = {
             #   enable = true;

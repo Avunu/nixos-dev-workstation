@@ -367,7 +367,7 @@
                 serviceConfig.Type = "oneshot";
                 script = ''
                   fallocate -l 16G /var/lib/swapfile
-                  f2fs_io pin set 1 /var/lib/swapfile
+                  f2fs_io pinfile set /var/lib/swapfile
                   chmod 600 /var/lib/swapfile
                   mkswap /var/lib/swapfile
                 '';

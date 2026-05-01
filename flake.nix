@@ -172,6 +172,7 @@
             # };
 
             programs = {
+              appimage.enable = true;
               direnv = {
                 enable = true;
                 nix-direnv.enable = true;
@@ -183,6 +184,128 @@
               git = {
                 enable = true;
                 config.safe.directory = [ "/etc/nixos" ];
+              };
+              nix-ld = {
+                enable = true;
+                libraries = with pkgs; [
+                  alsa-lib
+                  at-spi2-atk
+                  at-spi2-core
+                  bison
+                  bzip2
+                  cairo
+                  cups
+                  curl
+                  dbus
+                  dbus-glib
+                  dri-pkgconfig-stub
+                  expat
+                  ffmpeg
+                  flac
+                  fontconfig
+                  freetype
+                  fuse2
+                  fuse3
+                  gdk-pixbuf
+                  glib
+                  glibc
+                  gperf
+                  gtk3.out
+                  gtk4.out
+                  harfbuzz
+                  kdePackages.kcachegrind
+                  kdePackages.polkit-kde-agent-1
+                  kdePackages.polkit-qt-1
+                  khronos-ocl-icd-loader
+                  libaio
+                  libcap
+                  libdmx
+                  libdrm
+                  libepoxy
+                  libevdev
+                  libevent
+                  libffi
+                  libfontenc
+                  libFS
+                  libgbm
+                  libGL
+                  libGLU
+                  libICE
+                  libjpeg
+                  libkrb5
+                  libnotify
+                  libopus
+                  libpciaccess
+                  libpng
+                  libpthreadstubs
+                  libpulseaudio
+                  libsecret
+                  libSM
+                  libunwind
+                  libusb1
+                  libva
+                  libwebp
+                  libX11
+                  libXau
+                  libXaw
+                  libxcb
+                  libXcomposite
+                  libxcrypt
+                  libxcrypt-legacy
+                  libXcursor
+                  libxcvt
+                  libXdamage
+                  libXdmcp
+                  libXext
+                  libXfixes
+                  libXfont
+                  libXfont2
+                  libXft
+                  libXi
+                  libXinerama
+                  libxkbcommon
+                  libxkbfile
+                  libxml2
+                  libXmu
+                  libXp
+                  libXpm
+                  libXpresent
+                  libXrandr
+                  libXrender
+                  libXres
+                  libXScrnSaver
+                  libxshmfence
+                  libxslt
+                  libXt
+                  libXtst
+                  libXv
+                  libXvMC
+                  minizip
+                  nasm
+                  ncurses5
+                  nspr
+                  nss
+                  numactl
+                  openssl
+                  pango
+                  pciutils
+                  pcre2
+                  pipewire
+                  polkit
+                  polkit_gnome
+                  protobuf
+                  re2
+                  snappy
+                  speechd-minimal
+                  speex
+                  systemd
+                  unzip
+                  util-linux
+                  vulkan-loader
+                  vulkan-tools
+                  wayland
+                  zlib-ng
+                ];
               };
             };
 

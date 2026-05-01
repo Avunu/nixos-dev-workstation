@@ -146,28 +146,28 @@
               sshRootLogin = "prohibit-password";
             };
 
-            age = {
-              identityPaths = [ "/etc/agenix/key" ];
-              secrets.rclone = {
-                file = ./secrets/rclone.age;
-                mode = "0400";
-                owner = "root";
-                group = "root";
-              };
-            };
+            # age = {
+            #   identityPaths = [ "/etc/agenix/key" ];
+            #   secrets.rclone = {
+            #     file = ./secrets/rclone.age;
+            #     mode = "0400";
+            #     owner = "root";
+            #     group = "root";
+            #   };
+            # };
 
-            services.rclone-remotes = {
-              enable = true;
-              defaultConfigFile = config.age.secrets.rclone.path;
-              defaultUser = cfg.username;
-              defaultGroup = "users";
-              bisyncs.clients = {
-                remote = "vivobox:client";
-                localPath = "/home/${cfg.username}/Clients";
-                user = cfg.username;
-                group = "users";
-              };
-            };
+            # services.rclone-remotes = {
+            #   enable = true;
+            #   defaultConfigFile = config.age.secrets.rclone.path;
+            #   defaultUser = cfg.username;
+            #   defaultGroup = "users";
+            #   bisyncs.clients = {
+            #     remote = "vivobox:client";
+            #     localPath = "/home/${cfg.username}/Clients";
+            #     user = cfg.username;
+            #     group = "users";
+            #   };
+            # };
 
             programs = {
               direnv = {

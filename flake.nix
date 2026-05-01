@@ -26,7 +26,33 @@
     let
       lib = nixpkgs.lib;
     in
+    let
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      forAllSystems = f: lib.genAttrs supportedSystems f;
+    in
     {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.writeShellApplication {
+            name = "install-dev-workstation";
+            runtimeInputs = with pkgs; [
+              git
+              nix
+              util-linux
+              coreutils
+            ];
+            text = builtins.readFile ./installer.sh;
+          };
+        }
+      );
+
       nixosModules.devWorkstation =
         {
           config,

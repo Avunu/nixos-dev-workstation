@@ -27,6 +27,16 @@ nixos-dev-workstation/
     └── agenix-key     # (optional) Age private key for deployment
 ```
 
+## Quick Start
+
+Boot a NixOS live USB, connect to the internet, then:
+
+```bash
+sudo nix --experimental-features 'nix-command flakes' run github:Avunu/nixos-dev-workstation
+```
+
+The interactive installer will prompt for all configuration values (hostname, username, disk, SSH keys, etc.), partition the disk, install NixOS, and place the configuration at `/etc/nixos`. Reboot and you're done.
+
 ## Prerequisites
 
 - A machine with Nix installed (for remote deployment) or a NixOS live boot USB (for local installation)
@@ -104,6 +114,27 @@ Copy `local/flake.nix` and customize it for your machine:
 
 ## Deployment
 
+### Interactive Installer (Recommended)
+
+The primary way to deploy. Boot a NixOS live USB on the target machine, then:
+
+```bash
+# Connect to the internet
+nmcli device wifi connect "SSID" password "password"
+# Or for wired — should auto-connect
+
+# Run the installer
+sudo nix --experimental-features 'nix-command flakes' run github:Avunu/nixos-dev-workstation
+```
+
+The installer will:
+1. Prompt for hostname, username, password, timezone, locale, boot mode, disk, SSH keys, VPN, and agenix key
+2. Show a summary and ask for confirmation
+3. Partition and format the disk via disko
+4. Run `nixos-install`
+5. Place the flake and agenix key on the installed system
+6. Tell you to remove the USB and reboot
+
 ### Remote Deployment (via nixos-anywhere)
 
 Use this when deploying to a remote machine that's already booted into a Linux environment with SSH access (e.g., a NixOS installer ISO booted with SSH enabled, or an existing Linux installation).
@@ -132,67 +163,28 @@ cd local/
 - SSH root access to the target machine (password or key-based)
 - The target must be in a bootable Linux state (NixOS installer ISO is ideal)
 
-### Local Deployment (from NixOS Live Boot)
+### Local Deployment (via deploy.sh)
 
-Use this when you're physically at the machine, booted from a NixOS live USB.
+The `local/deploy.sh` script is an alternative for advanced use or scripted deployments:
 
 ```bash
-# Boot the NixOS installer USB
-# Connect to the internet (nmtui or nmcli)
-# Clone or copy the local/ directory to the live system
+# Remote (to a machine already running Linux with SSH)
+cd local/
+./deploy.sh remote <fqdn> <ip-address> [username]
 
+# Local (from NixOS live boot, requires customized local/flake.nix)
 sudo ./deploy.sh local <disk-device> [username]
 ```
-
-**Example:**
-```bash
-sudo ./deploy.sh local /dev/nvme0n1 dylan
-```
-
-**What happens:**
-1. Prompts for the age private key (or reads `./agenix-key`).
-2. Asks for the hostname.
-3. Confirms before erasing the disk (you must type `yes`).
-4. Runs disko to partition and format the target disk.
-5. Runs `nixos-install` to build and install the system to `/mnt`.
-6. Places the agenix key at `/mnt/etc/agenix/key`.
-7. Places the flake config at `/mnt/etc/nixos/flake.nix`.
-8. You remove the USB and reboot.
-
-**Requirements:**
-- Booted from a NixOS live USB (minimal or graphical)
-- Internet connection (to fetch flake inputs and Nix store paths)
-- Run as root (`sudo`)
 
 ### Preparing a NixOS Live USB
 
 Download the NixOS minimal ISO from https://nixos.org/download and write it to a USB:
 
 ```bash
-# From any Linux machine
 sudo dd if=nixos-minimal-*.iso of=/dev/sdX bs=4M status=progress
 ```
 
-Boot from the USB, then:
-
-```bash
-# Connect to WiFi (if needed)
-sudo systemctl start wpa_supplicant
-nmcli device wifi connect "SSID" password "password"
-
-# Or for wired, it should auto-connect via DHCP
-
-# Enable nix flakes in the live environment
-export NIX_CONFIG="experimental-features = nix-command flakes"
-
-# Get the deploy script onto the machine (clone, scp, or USB)
-nix-shell -p git
-git clone https://github.com/Avunu/nixos-dev-workstation.git
-cd nixos-dev-workstation/local
-
-# Run the local installer
-sudo ./deploy.sh local /dev/nvme0n1 dylan
-```
+Boot from it, connect to the internet, and run the installer command from Quick Start above.
 
 ## Secrets Management
 

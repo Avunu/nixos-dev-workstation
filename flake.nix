@@ -360,6 +360,7 @@
                     usbutils
                     vlc
                     vscode
+                    xmind
                   ]
                   cfg.extraPackages
                 ];

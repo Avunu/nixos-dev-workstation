@@ -199,7 +199,8 @@ header "Partitioning ${DISK_DEVICE}..."
 
 nix run github:nix-community/disko -- \
   --mode disko \
-  --flake "${BUILD_DIR}#${HOSTNAME}"
+  --flake "${BUILD_DIR}#${HOSTNAME}" \
+  --extra-experimental-features "nix-command flakes"
 
 header "Installing NixOS..."
 

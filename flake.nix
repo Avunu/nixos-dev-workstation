@@ -273,7 +273,7 @@
             };
 
             system.autoUpgrade = {
-              allowReboot = mkDefault true;
+              allowReboot = mkForce true;
               enable = mkDefault true;
               flags = [
                 "--update-input"

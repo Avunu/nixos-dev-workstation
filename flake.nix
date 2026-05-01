@@ -155,6 +155,10 @@
               appimage.enable = true;
               direnv = {
                 enable = true;
+                angrr = {
+                  autoUse = true;
+                  enable = true;
+                };
                 nix-direnv.enable = true;
                 enableBashIntegration = true;
               };
@@ -301,7 +305,20 @@
               };
             };
 
+            # overrides to allow rootless distrobox containers
+            system.activationScripts.subuid-persist = {
+              text = ''
+                echo "${cfg.username}:100000:65536" > /etc/subuid
+                echo "${cfg.username}:100000:65536" > /etc/subgid
+                chmod 644 /etc/subuid /etc/subgid
+              '';
+              deps = [ "users" ];
+            };
+
             environment = {
+              sessionVariables = {
+                PATH = [ "$HOME/.local/bin" ];
+              };
               variables.SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
               systemPackages =
                 with pkgs;
@@ -311,25 +328,36 @@
                     install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
                   '')
                   [
+                    android-tools
                     appimage-run
                     beeper
                     bitwarden-desktop
+                    boxbuddy
                     bun
+                    cloudflared
+                    devenv
+                    distrobox
                     docker-compose
                     gh
                     gimp
                     git
                     github-desktop
                     gnome-disk-utility
+                    gnome-logs
                     google-chrome
                     inkscape
                     libreoffice-fresh
                     nixfmt
+                    nodejs-slim
                     obsidian
                     podman-compose
                     podman-desktop
+                    rclone
                     rustdesk-flutter
+                    scrcpy
+                    screen
                     service-wrapper
+                    usbutils
                     vlc
                     vscode
                   ]
@@ -337,16 +365,20 @@
                 ];
             };
 
-            users.users.${cfg.username} = {
-              extraGroups = [
-                "input"
-                "networkmanager"
-                "wheel"
-                "podman"
-              ];
-              openssh.authorizedKeys.keys = cfg.sshKeys;
+            users = {
+              users = {
+                ${cfg.username} = {
+                  extraGroups = [
+                    "input"
+                    "networkmanager"
+                    "wheel"
+                    "podman"
+                  ];
+                  openssh.authorizedKeys.keys = cfg.sshKeys;
+                };
+                root.openssh.authorizedKeys.keys = cfg.sshKeys;
+              };
             };
-            users.users.root.openssh.authorizedKeys.keys = cfg.sshKeys;
 
             swapDevices = [
               {
@@ -377,49 +409,10 @@
                   util-linux
                 ];
               };
-              services.flake-update = {
-                unitConfig = {
-                  Description = "Update flake inputs";
-                  StartLimitIntervalSec = 300;
-                  StartLimitBurst = 5;
-                };
-                serviceConfig = {
-                  ExecStart = "${pkgs.nix}/bin/nix flake update --flake /etc/nixos";
-                  Restart = "on-failure";
-                  RestartSec = "120s";
-                  Type = "oneshot";
-                  User = "root";
-                  Environment = "HOME=/root";
-                };
-                wants = [ "network-online.target" ];
-                after = [ "network-online.target" ];
-                before = [ "nixos-upgrade.service" ];
-                path = with pkgs; [
-                  nix
-                  git
-                  host
-                ];
-                requiredBy = [ "nixos-upgrade.service" ];
-              };
-              timers.flake-update = {
-                wantedBy = [ "timers.target" ];
-                timerConfig = {
-                  OnCalendar = "hourly";
-                  Persistent = true;
-                  Unit = "flake-update.service";
-                };
-              };
             };
 
             system.autoUpgrade = {
               allowReboot = mkForce true;
-              enable = mkDefault true;
-              flags = [
-                "--update-input"
-                "nixpkgs"
-                "--impure"
-              ];
-              flake = mkDefault "/etc/nixos";
               rebootWindow = mkDefault {
                 lower = "01:00";
                 upper = "05:00";

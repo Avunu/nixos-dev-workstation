@@ -94,14 +94,7 @@ case "${VPN_CHOICE}" in
   *) ENABLE_VPN="false" ;;
 esac
 
-# Agenix key
-echo ""
-info "Agenix private key (for rclone secret decryption)."
-echo "  This key starts with AGE-SECRET-KEY-..."
-read -rp "  Paste key (or leave empty to skip): " AGENIX_KEY
-if [ -n "$AGENIX_KEY" ] && [[ ! "$AGENIX_KEY" == AGE-SECRET-KEY-* ]]; then
-  echo "  WARNING: Key does not look like an age secret key."
-fi
+
 
 # State version
 STATE_VERSION="25.11"
@@ -117,7 +110,6 @@ echo "  Boot mode:    $BOOT_MODE"
 echo "  Disk:         $DISK_DEVICE"
 echo "  SSH keys:     ${#SSH_KEYS[@]} key(s)"
 echo "  VPN:          $ENABLE_VPN"
-echo "  Agenix key:   $([ -n "$AGENIX_KEY" ] && echo "provided" || echo "skipped")"
 echo ""
 echo -e "  ${RED}WARNING: $DISK_DEVICE will be completely erased!${NC}"
 echo ""
@@ -220,18 +212,7 @@ mkdir -p /mnt/etc/nixos
 cp "${BUILD_DIR}/flake.nix" /mnt/etc/nixos/flake.nix
 chmod 644 /mnt/etc/nixos/flake.nix
 
-# Agenix key
-if [ -n "$AGENIX_KEY" ]; then
-  info "Installing agenix key to /mnt/etc/agenix/..."
-  mkdir -p /mnt/etc/agenix
-  echo "$AGENIX_KEY" > /mnt/etc/agenix/key
-  chmod 600 /mnt/etc/agenix/key
-else
-  echo ""
-  echo "  NOTE: No agenix key was provided."
-  echo "  Place it manually at /etc/agenix/key after first boot"
-  echo "  for rclone bisync to work."
-fi
+
 
 # --- Done ---
 

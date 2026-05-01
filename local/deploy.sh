@@ -20,25 +20,6 @@ if [ -z "$MODE" ]; then
   usage
 fi
 
-get_agenix_key() {
-  local key_file="./agenix-key"
-  if [ -f "$key_file" ]; then
-    echo "Found agenix key at $key_file"
-    AGENIX_KEY="$(cat "$key_file")"
-  else
-    echo "No ./agenix-key file found."
-    echo "Paste the age private key (starts with AGE-SECRET-KEY-), then press Enter:"
-    read -r AGENIX_KEY
-    if [ -z "$AGENIX_KEY" ]; then
-      echo "ERROR: No key provided. The rclone bisync will not work without it."
-      exit 1
-    fi
-    if [[ ! "$AGENIX_KEY" == AGE-SECRET-KEY-* ]]; then
-      echo "WARNING: Key does not start with AGE-SECRET-KEY-. Proceeding anyway."
-    fi
-  fi
-}
-
 deploy_remote() {
   local FQDN="${1:-}"
   local IP_ADDRESS="${2:-}"
@@ -53,8 +34,6 @@ deploy_remote() {
   echo "Deploying NixOS Development Workstation to $FQDN (hostname: $HOSTNAME)"
   echo ""
 
-  get_agenix_key
-
   local temp
   temp=$(mktemp -d)
   trap "rm -rf $temp" EXIT
@@ -63,11 +42,6 @@ deploy_remote() {
   mkdir -p "${temp}/etc/nixos"
   cp flake.nix "${temp}/etc/nixos/flake.nix"
   chmod 644 "${temp}/etc/nixos/flake.nix"
-
-  echo "Setting up agenix key..."
-  mkdir -p "${temp}/etc/agenix"
-  echo "$AGENIX_KEY" > "${temp}/etc/agenix/key"
-  chmod 600 "${temp}/etc/agenix/key"
 
   echo "Running nixos-anywhere..."
   nix run github:nix-community/nixos-anywhere -- \
@@ -110,8 +84,6 @@ deploy_local() {
   fi
   echo ""
 
-  get_agenix_key
-
   local HOSTNAME
   read -rp "Hostname for this machine: " HOSTNAME
   if [ -z "$HOSTNAME" ]; then
@@ -144,12 +116,6 @@ deploy_local() {
 
   echo "Building and installing NixOS..."
   nixos-install --flake "${build_dir}#${HOSTNAME}" --no-root-passwd
-
-  # Place the agenix key and flake on the installed system
-  echo "Installing agenix key..."
-  mkdir -p /mnt/etc/agenix
-  echo "$AGENIX_KEY" > /mnt/etc/agenix/key
-  chmod 600 /mnt/etc/agenix/key
 
   echo "Installing flake configuration..."
   mkdir -p /mnt/etc/nixos

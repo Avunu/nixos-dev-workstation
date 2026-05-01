@@ -1,0 +1,7 @@
+# Age private key (never commit)
+local/agenix-key
+agenix-key
+
+# Nix build artifacts
+result
+result-*

@@ -197,10 +197,10 @@ info "Generated flake.nix at ${BUILD_DIR}/flake.nix"
 
 header "Partitioning ${DISK_DEVICE}..."
 
-nix run github:nix-community/disko -- \
+nix run github:nix-community/disko \
+  --experimental-features "nix-command flakes" -- \
   --mode disko \
   --flake "${BUILD_DIR}#${HOSTNAME}" \
-  --extra-experimental-features "nix-command flakes"
 
 header "Installing NixOS..."
 

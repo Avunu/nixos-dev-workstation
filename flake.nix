@@ -346,7 +346,6 @@
                     libreoffice-fresh
                     nixfmt
                     obsidian
-                    onlyoffice-desktopeditors
                     podman-compose
                     podman-desktop
                     rustdesk-flutter

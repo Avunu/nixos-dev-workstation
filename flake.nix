@@ -146,30 +146,10 @@
               sshRootLogin = "prohibit-password";
             };
 
-            # age = {
-            #   identityPaths = [ "/etc/agenix/key" ];
-            #   secrets.rclone = {
-            #     file = ./secrets/rclone.age;
-            #     mode = "0400";
-            #     owner = "root";
-            #     group = "root";
-            #   };
-            # };
-
-            boot.plymouth.logo = ./logo.png;
-
-            # services.rclone-remotes = {
-            #   enable = true;
-            #   defaultConfigFile = config.age.secrets.rclone.path;
-            #   defaultUser = cfg.username;
-            #   defaultGroup = "users";
-            #   bisyncs.clients = {
-            #     remote = "vivobox:client";
-            #     localPath = "/home/${cfg.username}/Clients";
-            #     user = cfg.username;
-            #     group = "users";
-            #   };
-            # };
+            boot = {
+              kernelPackages = pkgs.linuxPackages_zen;
+              plymouth.logo = ./logo.png;
+            };
 
             programs = {
               appimage.enable = true;
@@ -402,6 +382,13 @@
                 };
               };
             };
+
+            swapDevices = [
+              {
+                device = "/var/lib/swapfile";
+                size = 16 * 1024;
+              }
+            ];
 
             system.autoUpgrade = {
               allowReboot = mkForce true;

@@ -348,7 +348,34 @@
             };
             users.users.root.openssh.authorizedKeys.keys = cfg.sshKeys;
 
+            swapDevices = [
+              {
+                device = "/var/lib/swapfile";
+                size = 16 * 1024;
+              }
+            ];
+
             systemd = {
+              services.f2fs-pin-swapfile = {
+                description = "Create F2FS swap file with compression disabled";
+                wantedBy = [ "var-lib-swapfile.swap" ];
+                before = [
+                  "create-swap-var-lib-swapfile.service"
+                  "var-lib-swapfile.swap"
+                ];
+                unitConfig.ConditionPathExists = "!/var/lib/swapfile";
+                serviceConfig.Type = "oneshot";
+                script = ''
+                  fallocate -l ${toString (16 * 1024)}M /var/lib/swapfile
+                  f2fs_io pin set 1 /var/lib/swapfile
+                  chmod 600 /var/lib/swapfile
+                  mkswap /var/lib/swapfile
+                '';
+                path = with pkgs; [
+                  f2fs-tools
+                  util-linux
+                ];
+              };
               services.flake-update = {
                 unitConfig = {
                   Description = "Update flake inputs";
@@ -382,13 +409,6 @@
                 };
               };
             };
-
-            swapDevices = [
-              {
-                device = "/var/lib/swapfile";
-                size = 16 * 1024;
-              }
-            ];
 
             system.autoUpgrade = {
               allowReboot = mkForce true;

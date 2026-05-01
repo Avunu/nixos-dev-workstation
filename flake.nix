@@ -357,6 +357,7 @@
                     scrcpy
                     screen
                     service-wrapper
+                    thunderbird-latest
                     usbutils
                     vlc
                     vscode

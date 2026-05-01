@@ -245,11 +245,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777646139,
-        "narHash": "sha256-jLQGG1Q/W9TH5uiQ6WHqMYXd/A9YLv1UojiD2EuyD7c=",
+        "lastModified": 1777646894,
+        "narHash": "sha256-+1XnR382cKtieKW9Cye4P+IbZEBwUx3k+I1DTYVt1fk=",
         "owner": "Avunu",
         "repo": "nixos-rclone",
-        "rev": "3349cebe5c7eb597fab4e6883535622b83242fb7",
+        "rev": "36eed5eb231ec478fdc3eb7610950c70868f5bfc",
         "type": "github"
       },
       "original": {

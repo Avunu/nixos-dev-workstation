@@ -946,11 +946,11 @@
         "packagekit-src": "packagekit-src"
       },
       "locked": {
-        "lastModified": 1777731637,
-        "narHash": "sha256-K+Peyq+d3CorZNpJ1P7IDmXtxoRnFnVLCFbJDsgQxQo=",
+        "lastModified": 1777733881,
+        "narHash": "sha256-eLdJBgeW9nXPVn4vlt/4LPJ/M4W2s8yXMMTQw244eco=",
         "owner": "Avunu",
         "repo": "nix-profile-packagekit-backend",
-        "rev": "8d682f6bdfe416e7844ea7b6bacad9834a94fc6a",
+        "rev": "a4f29151026f74963b86a5e07691719f92ce6bb6",
         "type": "github"
       },
       "original": {
@@ -1049,11 +1049,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777732342,
-        "narHash": "sha256-TvGk+BH4iHZ3Oxa9KhibLenL4koxrqdpOKNgrsPcXZ8=",
+        "lastModified": 1777734025,
+        "narHash": "sha256-el0AcDR/gPBlg0JQRWH/ZQKnNLD1WVbZ/xB4qxk/+0c=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "47d8f6e341b177f0bb64f617d2e1943514854390",
+        "rev": "053db6d1ba53526350e067f9830e48d160d83b54",
         "type": "github"
       },
       "original": {

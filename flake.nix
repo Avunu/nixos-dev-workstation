@@ -323,7 +323,7 @@
               systemPackages =
                 with pkgs;
                 lib.flatten [
-                  (python3.withPackages (ps: with ps; [ isort uv ]))
+                  (python3.withPackages (ps: with ps; [ isort ruff uv ]))
                   (pkgs.runCommand "custom-distro-icon" { } ''
                     install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
                   '')

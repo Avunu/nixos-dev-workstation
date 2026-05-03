@@ -323,7 +323,7 @@
               systemPackages =
                 with pkgs;
                 lib.flatten [
-                  (python3.withPackages (ps: with ps; [ uv ]))
+                  (python3.withPackages (ps: with ps; [ isort uv ]))
                   (pkgs.runCommand "custom-distro-icon" { } ''
                     install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
                   '')
@@ -352,6 +352,7 @@
                     obsidian
                     podman-compose
                     podman-desktop
+                    pre-commit
                     rclone
                     rustdesk-flutter
                     scrcpy

@@ -359,6 +359,8 @@
                     screen
                     service-wrapper
                     thunderbird-latest
+                    typescript
+                    typescript-language-server
                     usbutils
                     vlc
                     vscode

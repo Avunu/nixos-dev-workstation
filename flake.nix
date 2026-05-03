@@ -348,7 +348,7 @@
                     inkscape
                     libreoffice-fresh
                     nixfmt
-                    nodejs-slim
+                    nodejs
                     obsidian
                     podman-compose
                     podman-desktop

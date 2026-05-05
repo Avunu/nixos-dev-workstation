@@ -225,6 +225,7 @@
                   libpulseaudio
                   libsecret
                   libSM
+                  libsoup_3
                   libunwind
                   libusb1
                   libva

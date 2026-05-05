@@ -288,6 +288,7 @@
                   vulkan-loader
                   vulkan-tools
                   wayland
+                  webkitgtk_4_1
                   zlib-ng
                 ];
               };

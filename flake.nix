@@ -202,6 +202,9 @@
                   kdePackages.polkit-qt-1
                   khronos-ocl-icd-loader
                   libaio
+                  libappindicator
+                  libappindicator-gtk3
+                  libayatana-appindicator
                   libcap
                   libdmx
                   libdrm

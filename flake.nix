@@ -352,6 +352,7 @@
                     google-chrome
                     inkscape
                     libreoffice-fresh
+                    msedit
                     nixfmt
                     nodejs
                     obsidian

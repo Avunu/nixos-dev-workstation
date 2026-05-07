@@ -406,7 +406,15 @@
                   "create-swap-var-lib-swapfile.service"
                   "var-lib-swapfile.swap"
                 ];
-                unitConfig.ConditionPathExists = "!/var/lib/swapfile";
+                unitConfig = {
+                  ConditionPathExists = "!/var/lib/swapfile";
+                  # Must disable DefaultDependencies to avoid ordering cycle:
+                  # var-lib-swapfile.swap → f2fs-pin-swapfile → (After=sysinit.target)
+                  #   → sysinit.target → swap.target → var-lib-swapfile.swap
+                  DefaultDependencies = "no";
+                  # Ensure /var/lib is mounted before trying to create the swapfile
+                  RequiresMountsFor = "/var/lib";
+                };
                 serviceConfig.Type = "oneshot";
                 script = ''
                   touch /var/lib/swapfile

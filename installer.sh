@@ -191,28 +191,11 @@ git -C "${BUILD_DIR}" add flake.nix
 
 # --- Partition and install ---
 
-header "Partitioning ${DISK_DEVICE}..."
+header "Partitioning and installing NixOS..."
 
-nix run github:nix-community/disko \
-  --experimental-features "nix-command flakes" -- \
-  --mode disko \
+disko-install \
   --flake "${BUILD_DIR}#${HOSTNAME}" \
-
-header "Installing NixOS..."
-
-nixos-install --flake "${BUILD_DIR}#${HOSTNAME}" --no-root-passwd
-
-# --- Post-install: place files on the new system ---
-
-header "Configuring installed system..."
-
-# Flake config
-info "Installing flake to /mnt/etc/nixos/..."
-mkdir -p /mnt/etc/nixos
-cp "${BUILD_DIR}/flake.nix" /mnt/etc/nixos/flake.nix
-chmod 644 /mnt/etc/nixos/flake.nix
-
-
+  --extra-files "${BUILD_DIR}/flake.nix" /etc/nixos/flake.nix
 
 # --- Done ---
 

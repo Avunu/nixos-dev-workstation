@@ -43,13 +43,18 @@
           default = pkgs.writeShellApplication {
             name = "install-dev-workstation";
             runtimeInputs = with pkgs; [
+              disko
               git
               nix
+              nixos-install-tools
               util-linux
               coreutils
             ];
             text = builtins.readFile ./installer.sh;
           };
+        }
+        // lib.optionalAttrs (system == "x86_64-linux") {
+          installerIso = self.nixosConfigurations.installerIso.config.system.build.isoImage;
         }
       );
 
@@ -440,5 +445,70 @@
             };
           };
         };
+
+      # ================================================================
+      # INSTALLER ISO
+      # Boots into an interactive installer that prompts the user for
+      # configuration, generates /etc/nixos/flake.nix, then partitions
+      # and installs via disko-install.  Assumes the user intends to
+      # overwrite any existing local install.
+      # Build with: nix build .#installerIso
+      # ================================================================
+      nixosConfigurations.installerIso = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+
+          (
+            { pkgs, ... }:
+            {
+              # Embed this entire flake into the ISO for reference.
+              environment.etc."installer-flake".source = self;
+
+              nix.settings.experimental-features = [
+                "nix-command"
+                "flakes"
+              ];
+
+              environment.systemPackages = with pkgs; [
+                disko
+              ];
+
+              systemd.services.interactive-install = {
+                description = "Interactive NixOS Dev Workstation Installer";
+                wantedBy = [ "multi-user.target" ];
+                after = [
+                  "network.target"
+                  "polkit.service"
+                ];
+                conflicts = [ "getty@tty1.service" ];
+
+                serviceConfig = {
+                  Type = "oneshot";
+                  StandardInput = "tty";
+                  StandardOutput = "tty";
+                  StandardError = "tty";
+                  TTYPath = "/dev/tty1";
+                  TTYReset = true;
+                  TTYVHangup = true;
+                  RemainAfterExit = true;
+                };
+
+                path = with pkgs; [
+                  bash
+                  coreutils
+                  disko
+                  git
+                  nix
+                  nixos-install-tools
+                  util-linux
+                ];
+
+                script = builtins.readFile ./installer.sh;
+              };
+            }
+          )
+        ];
+      };
     };
 }

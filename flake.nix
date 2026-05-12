@@ -353,6 +353,7 @@
                     inkscape
                     libreoffice-fresh
                     msedit
+                    nixd
                     nixfmt
                     nodejs
                     obsidian

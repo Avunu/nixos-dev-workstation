@@ -187,7 +187,7 @@ FLAKE
 cat > "${BUILD_DIR}/nixos-flake.nix" << FLAKE
 {
   inputs = {
-    nixpkgs.url = "github:numtide/nixpkgs-unfree?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-dev-workstation = {
       url = "github:Avunu/nixos-dev-workstation";
       inputs.nixpkgs.follows = "nixpkgs";

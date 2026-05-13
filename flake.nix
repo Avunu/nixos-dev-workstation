@@ -2,7 +2,7 @@
   description = "NixOS Development Workstation";
 
   inputs = {
-    nixpkgs.url = "github:numtide/nixpkgs-unfree?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";

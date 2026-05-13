@@ -447,6 +447,25 @@
         };
 
       # ================================================================
+      # TEMPLATE CONFIG — used only to pre-populate the ISO Nix store.
+      # Packages are content-addressed; hostname/username don't affect
+      # the package closure, so any valid values work here.
+      # ================================================================
+      nixosConfigurations.devWorkstationTemplate = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          self.nixosModules.devWorkstation
+          {
+            devWorkstation = {
+              hostName = "template";
+              username = "user";
+              diskDevice = "/dev/sda";
+            };
+          }
+        ];
+      };
+
+      # ================================================================
       # INSTALLER ISO
       # Boots into an interactive installer that prompts the user for
       # configuration, generates /etc/nixos/flake.nix, then partitions
@@ -462,8 +481,17 @@
           (
             { pkgs, ... }:
             {
-              # Embed this entire flake into the ISO for reference.
+              # Embed this entire flake into the ISO so the installer can
+              # reference it as a local path input — same locked nixpkgs,
+              # same store paths, no internet required during install.
               environment.etc."installer-flake".source = self;
+
+              # Pre-populate the ISO squashfs with the full package closure
+              # of the dev workstation.  disko-install will copy these store
+              # paths to the target disk without downloading anything.
+              isoImage.storeContents = [
+                self.nixosConfigurations.devWorkstationTemplate.config.system.build.toplevel
+              ];
 
               nix.settings.experimental-features = [
                 "nix-command"

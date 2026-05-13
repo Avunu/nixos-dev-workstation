@@ -136,6 +136,57 @@ done
 cat > "${BUILD_DIR}/flake.nix" << FLAKE
 {
   inputs = {
+    # Point at the flake embedded in the ISO — same locked nixpkgs revision
+    # that was used to build the ISO, so all packages are already in the
+    # local Nix store and nothing needs to be fetched from the internet.
+    nixos-dev-workstation.url = "path:/etc/installer-flake";
+    nixpkgs.follows = "nixos-dev-workstation/nixpkgs";
+  };
+
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixos-dev-workstation,
+    }:
+    let
+      hostName = "${HOSTNAME}";
+      username = "${USERNAME}";
+      system = "x86_64-linux";
+    in
+    {
+      nixosConfigurations = {
+        "\${hostName}" = nixpkgs.lib.nixosSystem {
+          system = system;
+          modules = [
+            { nix.nixPath = [ "nixpkgs=\${self.inputs.nixpkgs}" ]; }
+            nixos-dev-workstation.nixosModules.devWorkstation
+            {
+              devWorkstation = {
+                hostName = hostName;
+                diskDevice = "${DISK_DEVICE}";
+                bootMode = "${BOOT_MODE}";
+                timeZone = "${TIMEZONE}";
+                locale = "${LOCALE}";
+                username = username;
+                initialPassword = "${INITIAL_PASSWORD}";
+                sshKeys = [${SSH_KEYS_NIX}
+                ];
+                stateVersion = "${STATE_VERSION}";
+                enableVpn = ${ENABLE_VPN};
+              };
+            }
+          ];
+        };
+      };
+    };
+}
+FLAKE
+
+# The permanent flake references upstream so the installed system can auto-update.
+cat > "${BUILD_DIR}/nixos-flake.nix" << FLAKE
+{
+  inputs = {
     nixpkgs.url = "github:numtide/nixpkgs-unfree?ref=nixos-unstable";
     nixos-dev-workstation = {
       url = "github:Avunu/nixos-dev-workstation";
@@ -183,11 +234,12 @@ cat > "${BUILD_DIR}/flake.nix" << FLAKE
 }
 FLAKE
 
-info "Generated flake.nix at ${BUILD_DIR}/flake.nix"
+info "Generated install flake at ${BUILD_DIR}/flake.nix"
+info "Generated permanent flake at ${BUILD_DIR}/nixos-flake.nix"
 
 # Initialize git repo so Nix can compute consistent hashes
 git init -q "${BUILD_DIR}"
-git -C "${BUILD_DIR}" add flake.nix
+git -C "${BUILD_DIR}" add flake.nix nixos-flake.nix
 
 # --- Partition and install ---
 
@@ -195,7 +247,7 @@ header "Partitioning and installing NixOS..."
 
 disko-install \
   --flake "${BUILD_DIR}#${HOSTNAME}" \
-  --extra-files "${BUILD_DIR}/flake.nix" /etc/nixos/flake.nix
+  --extra-files "${BUILD_DIR}/nixos-flake.nix" /etc/nixos/flake.nix
 
 # --- Done ---
 

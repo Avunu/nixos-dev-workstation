@@ -49,6 +49,9 @@
                 git push
               '')
             ];
+            packages = [
+              pkgs.mcp-nixos
+            ];
           };
         }
       );

@@ -1,6 +1,4 @@
-# Age private key (never commit)
-local/agenix-key
-agenix-key
+.direnv
 
 # Nix build artifacts
 result

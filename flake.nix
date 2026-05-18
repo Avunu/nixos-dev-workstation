@@ -25,8 +25,6 @@
     }:
     let
       lib = nixpkgs.lib;
-    in
-    let
       supportedSystems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -34,6 +32,26 @@
       forAllSystems = f: lib.genAttrs supportedSystems f;
     in
     {
+
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            nativeBuildInputs = [
+              (pkgs.writeShellScriptBin "update-flake" ''
+                git pull
+                nix flake update
+                git add flake.lock
+                git commit -m "chore: update flake"
+                git push
+              '')
+            ];
+          };
+        }
+      );
       packages = forAllSystems (
         system:
         let
@@ -333,7 +351,13 @@
               systemPackages =
                 with pkgs;
                 lib.flatten [
-                  (python3.withPackages (ps: with ps; [ isort ruff uv ]))
+                  (python3.withPackages (
+                    ps: with ps; [
+                      isort
+                      ruff
+                      uv
+                    ]
+                  ))
                   (pkgs.runCommand "custom-distro-icon" { } ''
                     install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
                   '')

@@ -432,8 +432,8 @@
             ];
 
             systemd = {
-              services.f2fs-pin-swapfile = {
-                description = "Create F2FS swap file with compression disabled";
+              services.pin-swapfile = {
+                description = "Create swap file with filesystem-appropriate attributes";
                 wantedBy = [ "var-lib-swapfile.swap" ];
                 before = [
                   "create-swap-var-lib-swapfile.service"
@@ -442,7 +442,7 @@
                 unitConfig = {
                   ConditionPathExists = "!/var/lib/swapfile";
                   # Must disable DefaultDependencies to avoid ordering cycle:
-                  # var-lib-swapfile.swap → f2fs-pin-swapfile → (After=sysinit.target)
+                  # var-lib-swapfile.swap → pin-swapfile → (After=sysinit.target)
                   #   → sysinit.target → swap.target → var-lib-swapfile.swap
                   DefaultDependencies = "no";
                   # Ensure /var/lib is mounted before trying to create the swapfile
@@ -450,13 +450,33 @@
                 };
                 serviceConfig.Type = "oneshot";
                 script = ''
-                  touch /var/lib/swapfile
-                  chmod 600 /var/lib/swapfile
-                  f2fs_io pinfile set /var/lib/swapfile
-                  fallocate -l 16G /var/lib/swapfile
-                  mkswap /var/lib/swapfile
+                  swapfile="/var/lib/swapfile"
+                  fstype=$(stat -f -c %T "$swapfile/..")
+
+                  touch "$swapfile"
+                  chmod 600 "$swapfile"
+
+                  case "$fstype" in
+                    btrfs)
+                      chattr +C "$swapfile"
+                      btrfs property set "$swapfile" compression ""
+                      truncate -s 0 "$swapfile"
+                      fallocate -l 16G "$swapfile"
+                      ;;
+                    f2fs)
+                      f2fs_io pinfile set "$swapfile"
+                      fallocate -l 16G "$swapfile"
+                      ;;
+                    *)
+                      fallocate -l 16G "$swapfile"
+                      ;;
+                  esac
+
+                  mkswap "$swapfile"
                 '';
                 path = with pkgs; [
+                  btrfs-progs
+                  e2fsprogs
                   f2fs-tools
                   util-linux
                 ];

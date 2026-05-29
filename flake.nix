@@ -397,6 +397,7 @@
                     scrcpy
                     screen
                     service-wrapper
+                    solaar
                     thunderbird-latest
                     typescript
                     typescript-language-server

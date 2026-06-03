@@ -89,6 +89,24 @@
         with lib;
         let
           cfg = config.devWorkstation;
+          # Build our global npm utilities cleanly from the lockfile
+          globalNpmTools = pkgs.buildNpmPackage {
+            pname = "global-npm-tools";
+            version = "1.0.0";
+
+            # Point to the directory containing your package.json & package-lock.json
+            src = ./global-npm-tools;
+
+            npmDeps = pkgs.importNpmLock {
+              npmRoot = ./global-npm-tools;
+            };
+
+            npmConfigHook = pkgs.importNpmLock.npmConfigHook;
+
+            # This prevents Nix from attempting to run a production bundler
+            # since we only care about the CLI binaries inside node_modules
+            dontNpmBuild = true;
+          };
         in
         {
           imports = [
@@ -355,6 +373,7 @@
               systemPackages =
                 with pkgs;
                 lib.flatten [
+                  globalNpmTools
                   (python3.withPackages (
                     ps: with ps; [
                       isort

@@ -1,0 +1,10 @@
+{
+  "name": "global-npm-tools",
+  "version": "1.0.0",
+  "dependencies": {
+    "sharp": "*"
+  },
+  "scripts": {
+    "upgrade": "npx npm-check-updates -u && npm install"
+  }
+}

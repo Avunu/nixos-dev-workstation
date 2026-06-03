@@ -2,6 +2,7 @@
   "name": "global-npm-tools",
   "version": "1.0.0",
   "dependencies": {
+    "@img/sharp-linux-x64": "^0.34.5",
     "sharp": "*"
   },
   "scripts": {

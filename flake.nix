@@ -315,6 +315,7 @@
                   systemd
                   unzip
                   util-linux
+                  vips
                   vulkan-loader
                   vulkan-tools
                   wayland

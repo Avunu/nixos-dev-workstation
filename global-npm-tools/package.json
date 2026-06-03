@@ -4,6 +4,7 @@
   "dependencies": {
     "@expo/image-utils": "^0.10.1",
     "@img/sharp-linux-x64": "^0.34.5",
+    "@jxsuite/compiler": "^0.25.3",
     "sharp": "*"
   },
   "scripts": {

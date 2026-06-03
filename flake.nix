@@ -376,9 +376,17 @@
                   globalNpmTools
                   (python3.withPackages (
                     ps: with ps; [
+                      cffi
+                      installer
                       isort
+                      pkgconfig
+                      poetry-core
+                      pycparser
                       ruff
+                      setuptools
+                      ty
                       uv
+                      wheel
                     ]
                   ))
                   (pkgs.runCommand "custom-distro-icon" { } ''
@@ -391,24 +399,31 @@
                     bitwarden-desktop
                     boxbuddy
                     bun
+                    cacert
                     cloudflared
+                    coreutils
                     devenv
                     distrobox
                     docker-compose
+                    file
+                    findutils
                     gh
                     gimp
                     git
                     github-desktop
                     gnome-disk-utility
                     gnome-logs
+                    gnugrep
+                    gnused
                     google-chrome
                     inkscape
                     libreoffice-fresh
                     msedit
                     nixd
                     nixfmt
-                    nodejs
+                    nodejs_26
                     obsidian
+                    pkg-config
                     podman-compose
                     podman-desktop
                     pre-commit
@@ -422,8 +437,10 @@
                     typescript
                     typescript-language-server
                     usbutils
+                    vips
                     vlc
                     vscode
+                    which
                     xmind
                   ]
                   cfg.extraPackages

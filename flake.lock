@@ -357,11 +357,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1780688938,
-        "narHash": "sha256-PS/f1LjpohThMyiTK9EqX5Y13TKo7wXrvvwgtPf+4KQ=",
+        "lastModified": 1780689474,
+        "narHash": "sha256-aBii3sk2zeNwRQTjL4es/ZEluwN6IczLBEx0YO9ZK14=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "82a2117380dee87fdcf5b260a94a3bd517804ca2",
+        "rev": "16c41c677f1ca882eca07b48c587c50937f1be56",
         "type": "github"
       },
       "original": {

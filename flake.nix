@@ -233,7 +233,8 @@
               systemPackages =
                 with pkgs;
                 lib.flatten [
-                  globalNpmTools
+                  editRcloneConfig
+                  # globalNpmTools
                   (python3.withPackages (
                     ps: with ps; [
                       cffi
@@ -265,7 +266,6 @@
                     devenv
                     distrobox
                     docker-compose
-                    editRcloneConfig
                     file
                     findutils
                     gh

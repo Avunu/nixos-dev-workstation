@@ -258,7 +258,7 @@
                     podman-desktop
                     pre-commit
                     rclone
-                    rustdesk-flutter
+                    rustdesk
                     scrcpy
                     screen
                     service-wrapper

@@ -59,6 +59,36 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          editRcloneConfig = pkgs.writeShellApplication {
+            name = "edit-rclone-config";
+            runtimeInputs = with pkgs; [
+              agenix.packages.${system}.default
+              rclone
+            ];
+            text = ''
+                set -euo pipefail
+                TMPCONF="$(mktemp --suffix=.conf)"
+                trap 'rm -f "$TMPCONF"' EXIT
+
+                SECRET="/etc/nixos/secrets/rclone.age"
+
+                if [ -f "$SECRET" ]; then
+                  echo "Decrypting rclone config..."
+                  agenix -d "$SECRET" > "$TMPCONF"
+                else
+                  echo "No existing secret found, starting with empty config."
+                  touch "$TMPCONF"
+                fi
+
+                chmod 600 "$TMPCONF"
+                echo "Launching rclone config..."
+                ${pkgs.rclone}/bin/rclone --config "$TMPCONF" config
+
+                echo "Re-encrypting to $SECRET..."
+                agenix -e "$SECRET" < "$TMPCONF"
+                echo "Done. Secret updated."
+            '';
+          };
         in
         {
           default = pkgs.writeShellApplication {
@@ -235,6 +265,7 @@
                     devenv
                     distrobox
                     docker-compose
+                    editRcloneConfig
                     file
                     findutils
                     gh

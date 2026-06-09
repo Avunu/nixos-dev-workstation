@@ -356,9 +356,6 @@
                   gtk3.out
                   gtk4.out
                   harfbuzz
-                  kdePackages.kcachegrind
-                  kdePackages.polkit-kde-agent-1
-                  kdePackages.polkit-qt-1
                   khronos-ocl-icd-loader
                   libaio
                   libappindicator

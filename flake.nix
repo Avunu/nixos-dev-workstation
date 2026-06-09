@@ -92,7 +92,7 @@
           editRcloneConfig = pkgs.writeShellApplication {
             name = "edit-rclone-config";
             runtimeInputs = with pkgs; [
-              agenix.packages.${system}.default
+              inputs.agenix.packages.${system}.default
               rclone
             ];
             text = ''

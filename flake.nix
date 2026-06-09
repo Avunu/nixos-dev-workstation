@@ -195,6 +195,90 @@
               plymouth.logo = ./logo.png;
             };
 
+            environment = {
+              sessionVariables = {
+                PATH = [ "$HOME/.local/bin" ];
+              };
+              variables.SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
+              systemPackages =
+                with pkgs;
+                lib.flatten [
+                  globalNpmTools
+                  (python3.withPackages (
+                    ps: with ps; [
+                      cffi
+                      installer
+                      isort
+                      pkgconfig
+                      poetry-core
+                      pycparser
+                      ruff
+                      setuptools
+                      ty
+                      uv
+                      wheel
+                    ]
+                  ))
+                  (pkgs.runCommand "custom-distro-icon" { } ''
+                    install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
+                  '')
+                  [
+                    android-tools
+                    appimage-run
+                    beeper
+                    bitwarden-desktop
+                    boxbuddy
+                    bun
+                    cacert
+                    cloudflared
+                    coreutils
+                    devenv
+                    distrobox
+                    docker-compose
+                    file
+                    findutils
+                    gh
+                    gimp
+                    git
+                    github-desktop
+                    gnome-disk-utility
+                    gnome-logs
+                    gnugrep
+                    gnused
+                    google-chrome
+                    inkscape
+                    libreoffice-fresh
+                    msedit
+                    nixd
+                    nixfmt
+                    nodejs_26
+                    obsidian
+                    pkg-config
+                    podman-compose
+                    podman-desktop
+                    pre-commit
+                    rclone
+                    rustdesk-flutter
+                    scrcpy
+                    screen
+                    service-wrapper
+                    solaar
+                    thunderbird-latest
+                    typescript
+                    typescript-language-server
+                    usbutils
+                    vips
+                    vlc
+                    vscode
+                    which
+                    xmind
+                  ]
+                  cfg.extraPackages
+                ];
+            };
+
+            hardware.logitech.wireless.enable = true;
+
             programs = {
               appimage.enable = true;
               direnv = {
@@ -343,110 +427,6 @@
               };
             };
 
-            virtualisation = {
-              containers.enable = true;
-              oci-containers.backend = "podman";
-              podman = {
-                autoPrune.enable = true;
-                defaultNetwork.settings.dns_enabled = true;
-                dockerCompat = true;
-                dockerSocket.enable = true;
-                enable = true;
-              };
-            };
-
-            # overrides to allow rootless distrobox containers
-            system.activationScripts.subuid-persist = {
-              text = ''
-                echo "${cfg.username}:100000:65536" > /etc/subuid
-                echo "${cfg.username}:100000:65536" > /etc/subgid
-                chmod 644 /etc/subuid /etc/subgid
-              '';
-              deps = [ "users" ];
-            };
-
-            environment = {
-              sessionVariables = {
-                PATH = [ "$HOME/.local/bin" ];
-              };
-              variables.SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
-              systemPackages =
-                with pkgs;
-                lib.flatten [
-                  globalNpmTools
-                  (python3.withPackages (
-                    ps: with ps; [
-                      cffi
-                      installer
-                      isort
-                      pkgconfig
-                      poetry-core
-                      pycparser
-                      ruff
-                      setuptools
-                      ty
-                      uv
-                      wheel
-                    ]
-                  ))
-                  (pkgs.runCommand "custom-distro-icon" { } ''
-                    install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
-                  '')
-                  [
-                    android-tools
-                    appimage-run
-                    beeper
-                    bitwarden-desktop
-                    boxbuddy
-                    bun
-                    cacert
-                    cloudflared
-                    coreutils
-                    devenv
-                    distrobox
-                    docker-compose
-                    file
-                    findutils
-                    gh
-                    gimp
-                    git
-                    github-desktop
-                    gnome-disk-utility
-                    gnome-logs
-                    gnugrep
-                    gnused
-                    google-chrome
-                    inkscape
-                    libreoffice-fresh
-                    msedit
-                    nixd
-                    nixfmt
-                    nodejs_26
-                    obsidian
-                    pkg-config
-                    podman-compose
-                    podman-desktop
-                    pre-commit
-                    rclone
-                    rustdesk-flutter
-                    scrcpy
-                    screen
-                    service-wrapper
-                    solaar
-                    thunderbird-latest
-                    typescript
-                    typescript-language-server
-                    usbutils
-                    vips
-                    vlc
-                    vscode
-                    which
-                    xmind
-                  ]
-                  cfg.extraPackages
-                ];
-            };
-
             users = {
               users = {
                 ${cfg.username} = {
@@ -521,13 +501,28 @@
               };
             };
 
-            system.autoUpgrade = {
-              allowReboot = mkForce true;
-              rebootWindow = mkDefault {
-                lower = "01:00";
-                upper = "05:00";
+            # overrides to allow rootless distrobox containers
+            system.activationScripts.subuid-persist = {
+              text = ''
+                echo "${cfg.username}:100000:65536" > /etc/subuid
+                echo "${cfg.username}:100000:65536" > /etc/subgid
+                chmod 644 /etc/subuid /etc/subgid
+              '';
+              deps = [ "users" ];
+            };
+
+            virtualisation = {
+              containers.enable = true;
+              oci-containers.backend = "podman";
+              podman = {
+                autoPrune.enable = true;
+                defaultNetwork.settings.dns_enabled = true;
+                dockerCompat = true;
+                dockerSocket.enable = true;
+                enable = true;
               };
             };
+
           };
         };
 

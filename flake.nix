@@ -102,10 +102,19 @@
               cd /etc/nixos
 
               SECRET="secrets/rclone.age"
+              IDENTITY_FLAG=""
+
+              while getopts "i:" opt; do
+                case "$opt" in
+                  i) IDENTITY_FLAG="-i $OPTARG" ;;
+                  *) echo "Usage: edit-rclone-config [-i key-file]" >&2; exit 1 ;;
+                esac
+              done
 
               if [ -f "$SECRET" ]; then
                 echo "Decrypting rclone config..."
-                agenix -d "$SECRET" > "$TMPCONF"
+                # shellcheck disable=SC2086
+                agenix $IDENTITY_FLAG -d "$SECRET" > "$TMPCONF"
               else
                 echo "No existing secret found, starting with empty config."
                 touch "$TMPCONF"
@@ -116,7 +125,8 @@
               ${pkgs.rclone}/bin/rclone --config "$TMPCONF" config
 
               echo "Re-encrypting to $SECRET..."
-              agenix -e "$SECRET" < "$TMPCONF"
+              # shellcheck disable=SC2086
+              agenix $IDENTITY_FLAG -e "$SECRET" < "$TMPCONF"
               echo "Done. Secret updated."
             '';
           };

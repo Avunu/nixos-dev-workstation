@@ -99,8 +99,9 @@
               set -euo pipefail
               TMPCONF="$(mktemp --suffix=.conf)"
               trap 'rm -f "$TMPCONF"' EXIT
+              cd /etc/nixos
 
-              SECRET="/etc/nixos/secrets/rclone.age"
+              SECRET="secrets/rclone.age"
 
               if [ -f "$SECRET" ]; then
                 echo "Decrypting rclone config..."

@@ -286,6 +286,7 @@
                     gnome-disk-utility
                     gnome-logs
                     gnugrep
+                    gnumake
                     gnused
                     google-chrome
                     inkscape

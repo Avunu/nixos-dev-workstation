@@ -306,6 +306,7 @@
                     screen
                     service-wrapper
                     solaar
+                    stdenv.cc
                     thunderbird-latest
                     typescript
                     typescript-language-server

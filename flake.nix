@@ -483,6 +483,12 @@
               };
             };
 
+            # 16 GiB disk swap as a last-resort safety net behind zram.
+            # Note: microDesktop sets vm.page-cluster=0 (single-page reads, optimal
+            # for zram).  If the kernel falls through to this disk swap, performance
+            # will be poor.  The disk swap is not expected to be used under normal
+            # load; if you see regular disk swap activity, consider increasing RAM
+            # or overriding vm.page-cluster to 3 (32 pages / 128 KiB reads).
             swapDevices = [
               {
                 device = "/var/lib/swapfile";

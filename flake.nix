@@ -299,6 +299,7 @@
                     pkg-config
                     podman-compose
                     podman-desktop
+                    powershell
                     pre-commit
                     rclone
                     rustdesk

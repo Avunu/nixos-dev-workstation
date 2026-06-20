@@ -274,7 +274,6 @@
                     cacert
                     cloudflared
                     coreutils
-                    devenv
                     distrobox
                     docker-compose
                     file

@@ -289,6 +289,7 @@
                     gnused
                     google-chrome
                     inkscape
+                    jq
                     libreoffice-fresh
                     msedit
                     nixd

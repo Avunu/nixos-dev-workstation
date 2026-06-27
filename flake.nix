@@ -232,7 +232,7 @@
             };
 
             boot = {
-              kernelPackages = pkgs.linuxPackages_zen;
+              # kernelPackages = pkgs.linuxPackages_zen;
               plymouth.logo = ./logo.png;
             };
 

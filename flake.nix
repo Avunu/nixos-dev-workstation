@@ -302,7 +302,7 @@
                     powershell
                     pre-commit
                     rclone
-                    rustdesk
+                    #rustdesk
                     scrcpy
                     screen
                     service-wrapper

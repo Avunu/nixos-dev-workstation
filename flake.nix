@@ -35,16 +35,17 @@
       ];
       forAllSystems = f: lib.genAttrs supportedSystems f;
 
-      # Installer surface (nixos-install-helper). devWorkstation layers on
-      # microDesktop, so optionRoots names BOTH namespaces — the declaration-source
-      # default would miss microDesktop's options (declared in the upstream flake).
+      # Installer surface (nixos-install-helper). devWorkstation re-declares every
+      # technician-facing option and passes it through to microDesktop (and fixes
+      # enableSsh / ssh policy), so ONLY devWorkstation is a root — listing
+      # microDesktop too would prompt each shared option twice and write downstream
+      # values the passthrough immediately overrides.
       ih = inputs.nixos-install-helper.lib.mkProject {
         inherit nixpkgs self;
         system = "x86_64-linux";
         installModules = [ self.nixosModules.devWorkstation ];
         optionRoots = [
           "devWorkstation"
-          "microDesktop"
         ];
         flakeStyle = "local";
         upstream = "github:Avunu/nixos-dev-workstation";

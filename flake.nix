@@ -15,6 +15,10 @@
       url = "github:Avunu/nixos-rclone";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-install-helper = {
+      url = "github:Avunu/nixos-install-helper";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -30,6 +34,34 @@
         "aarch64-linux"
       ];
       forAllSystems = f: lib.genAttrs supportedSystems f;
+
+      # Installer surface (nixos-install-helper). devWorkstation layers on
+      # microDesktop, so optionRoots names BOTH namespaces — the declaration-source
+      # default would miss microDesktop's options (declared in the upstream flake).
+      ih = inputs.nixos-install-helper.lib.mkProject {
+        inherit nixpkgs self;
+        system = "x86_64-linux";
+        installModules = [ self.nixosModules.devWorkstation ];
+        optionRoots = [
+          "devWorkstation"
+          "microDesktop"
+        ];
+        flakeStyle = "local";
+        upstream = "github:Avunu/nixos-dev-workstation";
+        hints.diskDevice = "disk-device";
+        assets = [
+          {
+            name = "agenix-key";
+            target = "/etc/agenix/key";
+            mode = "0400";
+            required = true;
+            source = {
+              env = "agenix__key";
+              prompt = "paste";
+            };
+          }
+        ];
+      };
     in
     {
 
@@ -55,29 +87,12 @@
           };
         }
       );
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.writeShellApplication {
-            name = "install-dev-workstation";
-            runtimeInputs = with pkgs; [
-              disko
-              git
-              nix
-              nixos-install-tools
-              util-linux
-              coreutils
-            ];
-            text = builtins.readFile ./installer.sh;
-          };
-        }
-        // lib.optionalAttrs (system == "x86_64-linux") {
-          installerIso = self.nixosConfigurations.installerIso.config.system.build.isoImage;
-        }
-      );
+      # Installer artifacts (x86_64): settingsSchema + unattended/guided ISOs,
+      # default = the unattended ISO. The old install-dev-workstation wrapper is
+      # superseded by `nix run` (the wizard).
+      packages.x86_64-linux = ih.packages.x86_64-linux // {
+        default = ih.packages.x86_64-linux.installerIso;
+      };
 
       nixosModules.devWorkstation =
         {
@@ -159,6 +174,7 @@
           options.devWorkstation = {
             hostName = mkOption {
               type = types.str;
+              default = "nixos";
               description = "Hostname for the system";
             };
             diskDevice = mkOption {
@@ -186,6 +202,7 @@
             };
             username = mkOption {
               type = types.str;
+              default = "user";
               description = "Primary user name";
             };
             initialPassword = mkOption {
@@ -579,92 +596,11 @@
       # Packages are content-addressed; hostname/username don't affect
       # the package closure, so any valid values work here.
       # ================================================================
-      nixosConfigurations.devWorkstationTemplate = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          self.nixosModules.devWorkstation
-          {
-            devWorkstation = {
-              hostName = "template";
-              username = "user";
-              diskDevice = "/dev/sda";
-            };
-          }
-        ];
-      };
+      # install / installTemplate systems (the latter pre-populates the offline
+      # ISO closure, replacing the old devWorkstationTemplate).
+      nixosConfigurations = ih.nixosConfigurations;
 
-      # ================================================================
-      # INSTALLER ISO
-      # Boots into an interactive installer that prompts the user for
-      # configuration, generates /etc/nixos/flake.nix, then partitions
-      # and installs via disko-install.  Assumes the user intends to
-      # overwrite any existing local install.
-      # Build with: nix build .#installerIso
-      # ================================================================
-      nixosConfigurations.installerIso = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-
-          (
-            { pkgs, ... }:
-            {
-              # Embed this entire flake into the ISO so the installer can
-              # reference it as a local path input — same locked nixpkgs,
-              # same store paths, no internet required during install.
-              environment.etc."installer-flake".source = self;
-
-              # Pre-populate the ISO squashfs with the full package closure
-              # of the dev workstation.  disko-install will copy these store
-              # paths to the target disk without downloading anything.
-              isoImage.storeContents = [
-                self.nixosConfigurations.devWorkstationTemplate.config.system.build.toplevel
-              ];
-
-              nix.settings.experimental-features = [
-                "nix-command"
-                "flakes"
-              ];
-
-              environment.systemPackages = with pkgs; [
-                disko
-              ];
-
-              systemd.services.interactive-install = {
-                description = "Interactive NixOS Dev Workstation Installer";
-                wantedBy = [ "multi-user.target" ];
-                after = [
-                  "network.target"
-                  "polkit.service"
-                ];
-                conflicts = [ "getty@tty1.service" ];
-
-                serviceConfig = {
-                  Type = "oneshot";
-                  StandardInput = "tty";
-                  StandardOutput = "tty";
-                  StandardError = "tty";
-                  TTYPath = "/dev/tty1";
-                  TTYReset = true;
-                  TTYVHangup = true;
-                  RemainAfterExit = true;
-                };
-
-                path = with pkgs; [
-                  bash
-                  coreutils
-                  disko
-                  git
-                  nix
-                  nixos-install-tools
-                  util-linux
-                ];
-
-                script = builtins.readFile ./installer.sh;
-              };
-            }
-          )
-        ];
-      };
+      # configure / install / deploy / wizard (`nix run`) apps.
+      apps = ih.apps;
     };
 }

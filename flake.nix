@@ -283,16 +283,17 @@
                     install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
                   '')
                   [
-                    android-tools
+                    # android-tools
                     appimage-run
                     beeper
                     bitwarden-desktop
-                    boxbuddy
+                    # boxbuddy
                     bun
                     cacert
                     cloudflared
                     coreutils
-                    distrobox
+                    # distrobox
+                    dnslookup
                     docker-compose
                     file
                     findutils
@@ -308,6 +309,7 @@
                     google-chrome
                     inkscape
                     jq
+                    killall
                     libreoffice-fresh
                     msedit
                     nixd
@@ -320,7 +322,8 @@
                     powershell
                     pre-commit
                     rclone
-                    #rustdesk
+                    ripgrep
+                    rustdesk
                     scrcpy
                     screen
                     service-wrapper

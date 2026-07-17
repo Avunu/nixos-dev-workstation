@@ -516,11 +516,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784081802,
-        "narHash": "sha256-45N7oXGckrXemH66rpWSnczG+K6rikM3Aac26jj+TA4=",
+        "lastModified": 1784199787,
+        "narHash": "sha256-HAOMx5iZ1OY/Hp4/t3jkIz0t6wAO52LSo/N+hdnuBPk=",
         "owner": "Avunu",
         "repo": "nixos-install-helper",
-        "rev": "7d6ce9558eb8ff45be5317f9086d31b2a94c8a73",
+        "rev": "94ffe8e3762dd0a36deadebfed6b9972b9243cce",
         "type": "github"
       },
       "original": {
@@ -565,11 +565,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783884595,
-        "narHash": "sha256-lffuYdozDX4nSZr0Nj9+mKa/+fVuBWLFwA/zX5LOSO4=",
+        "lastModified": 1784085513,
+        "narHash": "sha256-l8xpIgjiyvLvb2gR2fN5Y1nIENAJ8/kkEEGV6Dc7zFo=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "0b5c9156319aa2727b21ad9ab2584a45d9971bcc",
+        "rev": "90f3fbe565737901edf45277a1dc226cc8fa031e",
         "type": "github"
       },
       "original": {
@@ -681,11 +681,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1784007870,
-        "narHash": "sha256-djcLt/JJphyNt4eDY9XTly+/WbCK5lqWq9lSgCmJkkQ=",
+        "lastModified": 1784120854,
+        "narHash": "sha256-KesHgItiZPgGX740axSiQLcIQ8D24MDqNpkKYWIek8k=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "18b9261cb3294b6d2a06d03f96872827b8fe2698",
+        "rev": "753cc8a3a87467296ddd1fa93f0cc3e81120ee46",
         "type": "github"
       },
       "original": {

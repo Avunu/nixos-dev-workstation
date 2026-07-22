@@ -234,6 +234,26 @@
           };
 
           config = {
+            # nixpkgs' vscode (nixos-unstable, 1.129.x) ships the vsce-sign
+            # extension-signature verifier without its execute bit. VSCode
+            # execFile()s node_modules/@vscode/vsce-sign/bin/vsce-sign to check
+            # signatures, hits EACCES, and every extension install fails unless the
+            # user manually clicks "Install anyway" (donotVerifySignature). The
+            # binary is a correctly patchelf'd native executable (clean ldd, runs
+            # fine once +x is restored) - so fixing the permission bit REPAIRS
+            # signature verification rather than disabling it.
+            nixpkgs.overlays = [
+              (final: prev: {
+                vscode = prev.vscode.overrideAttrs (old: {
+                  postFixup = (old.postFixup or "") + ''
+                    find "$out/lib/vscode/resources/app" \
+                      -path '*/@vscode/vsce-sign/bin/vsce-sign' \
+                      -exec chmod +x {} +
+                  '';
+                });
+              })
+            ];
+
             microDesktop = {
               hostName = cfg.hostName;
               diskDevice = cfg.diskDevice;

@@ -296,6 +296,27 @@
         "type": "github"
       }
     },
+    "niri": {
+      "inputs": {
+        "nixpkgs": [
+          "nixos-micro-desktop",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784570726,
+        "narHash": "sha256-9EMn69JBcFWFgUM7f0VBAX+jBby5b9H3M59U75+5yI4=",
+        "owner": "niri-wm",
+        "repo": "niri",
+        "rev": "7f26c3ee804fb6ed458ef7fb0e3c794f14e0b3bc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "niri-wm",
+        "repo": "niri",
+        "type": "github"
+      }
+    },
     "nix-packagekit": {
       "inputs": {
         "bombon": "bombon",
@@ -558,6 +579,7 @@
     "nixos-micro-desktop": {
       "inputs": {
         "disko": "disko_2",
+        "niri": "niri",
         "nix-packagekit": "nix-packagekit",
         "nixos-install-helper": "nixos-install-helper_2",
         "nixpkgs": [
@@ -565,11 +587,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785159290,
-        "narHash": "sha256-wedBuGq+sJfZ82tjEq3o1Z8pAwFEF5iw/EIUFK2+bck=",
+        "lastModified": 1785171134,
+        "narHash": "sha256-jZskU7S06jfkbk4qpBv2s+D6YVVipNpudRCPLDOaKng=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "e685b648b7cc3a1e6e028e2512a63f8b5c98e802",
+        "rev": "40b9d9a1f77020292537512b732e809c2f43fd0b",
         "type": "github"
       },
       "original": {

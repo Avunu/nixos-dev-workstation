@@ -236,7 +236,7 @@
     "git-hooks-nix_2": {
       "inputs": {
         "flake-compat": "flake-compat_3",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1783008725,
@@ -298,10 +298,7 @@
     },
     "niri": {
       "inputs": {
-        "nixpkgs": [
-          "nixos-micro-desktop",
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
         "lastModified": 1784570726,
@@ -587,11 +584,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785171134,
-        "narHash": "sha256-jZskU7S06jfkbk4qpBv2s+D6YVVipNpudRCPLDOaKng=",
+        "lastModified": 1785171411,
+        "narHash": "sha256-yL2kZNpBL6JMq0mM+pWGO9QOBnFjwG/Ci1nanHCqrXo=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "40b9d9a1f77020292537512b732e809c2f43fd0b",
+        "rev": "3b2d108c0f40f3a98477bf004367a412b15e942a",
         "type": "github"
       },
       "original": {
@@ -657,11 +654,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1782918843,
-        "narHash": "sha256-ETYnV9U7Sr+A45dohzZdfCZKOss4qrTkO+wgNZNvEc0=",
+        "lastModified": 1785141334,
+        "narHash": "sha256-kh35kIx7el4Jk8Ki3BH9/Pn1eZYSYLJ6LMALos0zOy0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e8273b29fe1390ec8d4603f2477357555291432e",
+        "rev": "38a4887411571457d700c51c64a6e49ead2ed5ab",
         "type": "github"
       },
       "original": {
@@ -703,6 +700,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1782918843,
+        "narHash": "sha256-ETYnV9U7Sr+A45dohzZdfCZKOss4qrTkO+wgNZNvEc0=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e8273b29fe1390ec8d4603f2477357555291432e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1785090369,
         "narHash": "sha256-m0pDuRJG7EDo9ri+4Ksu83VsI+PlxNC9lNBfydejce4=",
         "owner": "NixOS",
@@ -740,7 +753,7 @@
         "nixos-install-helper": "nixos-install-helper",
         "nixos-micro-desktop": "nixos-micro-desktop",
         "nixos-rclone": "nixos-rclone",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_3"
       }
     },
     "systems": {

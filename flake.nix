@@ -282,6 +282,7 @@
               systemPackages =
                 with pkgs;
                 lib.flatten [
+                  inputs.agenix.packages.${system}.default
                   editRcloneConfig
                   # globalNpmTools
                   (python3.withPackages (

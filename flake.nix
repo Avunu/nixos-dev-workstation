@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-micro-desktop = {
-      url = "github:Avunu/nixos-micro-desktop/niri";
+      url = "github:Avunu/nixos-micro-desktop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-rclone = {

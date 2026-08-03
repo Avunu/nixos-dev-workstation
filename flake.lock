@@ -399,7 +399,10 @@
         ],
         "nix-vm-test": "nix-vm-test",
         "nixos-images": "nixos-images",
-        "nixos-stable": "nixos-stable",
+        "nixos-stable": [
+          "nixos-install-helper",
+          "nixpkgs"
+        ],
         "nixpkgs": [
           "nixos-install-helper",
           "nixpkgs"
@@ -407,11 +410,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1784704708,
-        "narHash": "sha256-xuzg2Xfalr1X5ah5IPgqB8Vyif+2je1qkCtGxCB+rm0=",
+        "lastModified": 1785356851,
+        "narHash": "sha256-UYKTcayxYPE3yIruCv525WMbcYDLlkv79bRfkOuFNLs=",
         "owner": "nix-community",
         "repo": "nixos-anywhere",
-        "rev": "91fc9b70fc295258c366cce8627efb6f185fd9fb",
+        "rev": "5887f1c72fbf0e88000716237194de414d2299ee",
         "type": "github"
       },
       "original": {
@@ -429,7 +432,11 @@
         ],
         "nix-vm-test": "nix-vm-test_2",
         "nixos-images": "nixos-images_2",
-        "nixos-stable": "nixos-stable_2",
+        "nixos-stable": [
+          "nixos-micro-desktop",
+          "nixos-install-helper",
+          "nixpkgs"
+        ],
         "nixpkgs": [
           "nixos-micro-desktop",
           "nixos-install-helper",
@@ -438,11 +445,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1784704708,
-        "narHash": "sha256-xuzg2Xfalr1X5ah5IPgqB8Vyif+2je1qkCtGxCB+rm0=",
+        "lastModified": 1785356851,
+        "narHash": "sha256-UYKTcayxYPE3yIruCv525WMbcYDLlkv79bRfkOuFNLs=",
         "owner": "nix-community",
         "repo": "nixos-anywhere",
-        "rev": "91fc9b70fc295258c366cce8627efb6f185fd9fb",
+        "rev": "5887f1c72fbf0e88000716237194de414d2299ee",
         "type": "github"
       },
       "original": {
@@ -465,11 +472,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784197845,
-        "narHash": "sha256-qNbBfqbF4saeSlYnLxxdc52FiMDRrU2RAiOYARi2AyU=",
+        "lastModified": 1784802994,
+        "narHash": "sha256-4PcD0Ibzdkh85G+70w5dLlR9YgQ2bmNIjiPPMSzO57w=",
         "owner": "nix-community",
         "repo": "nixos-images",
-        "rev": "27bfc9df981b35f4911b8ea3bc3ecf51164beaa2",
+        "rev": "6ece16b0c97986fe085122e796044add4cc3ff64",
         "type": "github"
       },
       "original": {
@@ -494,11 +501,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784197845,
-        "narHash": "sha256-qNbBfqbF4saeSlYnLxxdc52FiMDRrU2RAiOYARi2AyU=",
+        "lastModified": 1784802994,
+        "narHash": "sha256-4PcD0Ibzdkh85G+70w5dLlR9YgQ2bmNIjiPPMSzO57w=",
         "owner": "nix-community",
         "repo": "nixos-images",
-        "rev": "27bfc9df981b35f4911b8ea3bc3ecf51164beaa2",
+        "rev": "6ece16b0c97986fe085122e796044add4cc3ff64",
         "type": "github"
       },
       "original": {
@@ -516,11 +523,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785292454,
-        "narHash": "sha256-9fpzdLzQruMahyma7RTN4ZdtzoGJMbhrwgZ4fcjL3UE=",
+        "lastModified": 1785778065,
+        "narHash": "sha256-0+X6qcTFEYj16IsZjVKxdjWf/9V6J22I8eia1kCX9UI=",
         "owner": "Avunu",
         "repo": "nixos-install-helper",
-        "rev": "b96db1d80f0eec6e982ab6ec5fae70e12cb516c7",
+        "rev": "e87b471792f89d7d8acb3ee9482c427bc407ac88",
         "type": "github"
       },
       "original": {
@@ -542,11 +549,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785292454,
-        "narHash": "sha256-9fpzdLzQruMahyma7RTN4ZdtzoGJMbhrwgZ4fcjL3UE=",
+        "lastModified": 1785778065,
+        "narHash": "sha256-0+X6qcTFEYj16IsZjVKxdjWf/9V6J22I8eia1kCX9UI=",
         "owner": "Avunu",
         "repo": "nixos-install-helper",
-        "rev": "b96db1d80f0eec6e982ab6ec5fae70e12cb516c7",
+        "rev": "e87b471792f89d7d8acb3ee9482c427bc407ac88",
         "type": "github"
       },
       "original": {
@@ -565,16 +572,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1785497846,
-        "narHash": "sha256-oMnhQSc3WUdEcVPYtCbcXOcFZKA3vJXuiBZC+UnCTfY=",
+        "lastModified": 1785785211,
+        "narHash": "sha256-nb7P5zvuZLswqsclulRRCri3EnKJWlVnZeGqE3hDElA=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "fc4ef1e92262680019f8a14b8631cbd8e673e9af",
+        "rev": "7c911370f914f3a583919e3e9d623373e2f4f469",
         "type": "github"
       },
       "original": {
         "owner": "Avunu",
-        "ref": "niri",
         "repo": "nixos-micro-desktop",
         "type": "github"
       }
@@ -598,38 +604,6 @@
       "original": {
         "owner": "Avunu",
         "repo": "nixos-rclone",
-        "type": "github"
-      }
-    },
-    "nixos-stable": {
-      "locked": {
-        "lastModified": 1784011430,
-        "narHash": "sha256-lDebytrYdd47IBLwvNOD+6AGeoqZ78CIKlp70hzW280=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "8eeec934ae0dbeca3d7868c059568a65c08b2fc3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-26.05",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixos-stable_2": {
-      "locked": {
-        "lastModified": 1784011430,
-        "narHash": "sha256-lDebytrYdd47IBLwvNOD+6AGeoqZ78CIKlp70hzW280=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "8eeec934ae0dbeca3d7868c059568a65c08b2fc3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-26.05",
-        "repo": "nixpkgs",
         "type": "github"
       }
     },
@@ -681,11 +655,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1785454630,
-        "narHash": "sha256-LQy14TZp77TwbQf40gg1V3jo8FwJG0jGDkAH+zRHqg8=",
+        "lastModified": 1785692966,
+        "narHash": "sha256-vUfIeBEfpbAfZ5zjgIkYk7eHBeVfCYVjLbWnMkseYnk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1559d3daa3ecc813a650b79375ea61b6741b8746",
+        "rev": "643809054d65fdd466a63e3155b8c498cb483c04",
         "type": "github"
       },
       "original": {

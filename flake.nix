@@ -344,7 +344,7 @@
                     pre-commit
                     rclone
                     ripgrep
-                    rustdesk
+                    rustdesk-flutter
                     scrcpy
                     screen
                     service-wrapper

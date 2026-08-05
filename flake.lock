@@ -572,11 +572,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785785211,
-        "narHash": "sha256-nb7P5zvuZLswqsclulRRCri3EnKJWlVnZeGqE3hDElA=",
+        "lastModified": 1785785466,
+        "narHash": "sha256-MGaUEbUfT+KVZvNihs1qs4eT3DadXnsQ4uS44ccH22Q=",
         "owner": "Avunu",
         "repo": "nixos-micro-desktop",
-        "rev": "7c911370f914f3a583919e3e9d623373e2f4f469",
+        "rev": "7d750df2f174e5fa281060d39a74fecad2deaeef",
         "type": "github"
       },
       "original": {
@@ -655,11 +655,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1785692966,
-        "narHash": "sha256-vUfIeBEfpbAfZ5zjgIkYk7eHBeVfCYVjLbWnMkseYnk=",
+        "lastModified": 1785828668,
+        "narHash": "sha256-8fsyqeO+mJqvIzeO4xIpgJe/f7MTbbVTEC6RT6WSXNs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "643809054d65fdd466a63e3155b8c498cb483c04",
+        "rev": "e72e4f299401a3689d4b3d5fc6496b11db7064eb",
         "type": "github"
       },
       "original": {

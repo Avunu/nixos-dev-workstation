@@ -7,6 +7,9 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+    };
     nixos-micro-desktop = {
       url = "github:Avunu/nixos-micro-desktop";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -283,6 +286,8 @@
                 with pkgs;
                 lib.flatten [
                   inputs.agenix.packages.${system}.default
+                  inputs.llm-agents.packages.${system}.claude-code
+                  inputs.llm-agents.packages.${system}.claude-desktop
                   editRcloneConfig
                   # globalNpmTools
                   (python3.withPackages (

@@ -9,6 +9,7 @@
     };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-micro-desktop = {
       url = "github:Avunu/nixos-micro-desktop";

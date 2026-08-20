@@ -155,8 +155,16 @@
             pname = "global-npm-tools";
             version = "1.0.0";
 
-            # Point to the directory containing your package.json & package-lock.json
-            src = ./global-npm-tools;
+            # Only the manifests; keeps a local `npm install` in
+            # ./global-npm-tools from leaking node_modules into the build, which
+            # would make npm consider the tree "up to date" and skip unpacking.
+            src = lib.fileset.toSource {
+              root = ./global-npm-tools;
+              fileset = lib.fileset.unions [
+                ./global-npm-tools/package.json
+                ./global-npm-tools/package-lock.json
+              ];
+            };
 
             npmDeps = pkgs.importNpmLock {
               npmRoot = ./global-npm-tools;
@@ -167,6 +175,34 @@
             # This prevents Nix from attempting to run a production bundler
             # since we only care about the CLI binaries inside node_modules
             dontNpmBuild = true;
+
+            # The `bun` npm package ships a placeholder bin/bun.exe and a
+            # postinstall (`node install.js`) that resolves
+            # @oven/bun-<platform>/bin/bun and then *executes* it with
+            # `--version` to validate it before moving it into place. That
+            # prebuilt ELF wants /lib64/ld-linux-x86-64.so.2, which exists
+            # neither in the build sandbox nor on NixOS, so the exec fails and
+            # install.js reports the misleading
+            # `Failed to find package "@oven/bun-linux-x64"` before trying to
+            # re-download it over the (sandboxed, offline) network.
+            # Skip install scripts and do the postinstall's job below instead.
+            npmRebuildFlags = [ "--ignore-scripts" ];
+
+            nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+            buildInputs = [ pkgs.openssl ];
+
+            # Promote the platform binary that install.js would have installed,
+            # and repoint the `bun` package's placeholders at it so anything
+            # resolving through node_modules/.bin also works.
+            postInstall = ''
+              pkgdir="$out/lib/node_modules/global-npm-tools"
+              install -Dm755 "$pkgdir/node_modules/@oven/bun-linux-x64/bin/bun" "$out/bin/bun"
+              ln -s bun "$out/bin/bunx"
+              # Symlink rather than ship a second 80 MB copy of the binary.
+              ln -sf "$out/bin/bun" "$pkgdir/node_modules/@oven/bun-linux-x64/bin/bun"
+              ln -sf "$out/bin/bun" "$pkgdir/node_modules/bun/bin/bun.exe"
+              ln -sf "$out/bin/bun" "$pkgdir/node_modules/bun/bin/bunx.exe"
+            '';
           };
         in
         {

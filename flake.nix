@@ -290,7 +290,7 @@
                   inputs.llm-agents.packages.${system}.claude-code
                   inputs.llm-agents.packages.${system}.claude-desktop
                   editRcloneConfig
-                  # globalNpmTools
+                  globalNpmTools
                   (python3.withPackages (
                     ps: with ps; [
                       cffi
@@ -315,7 +315,7 @@
                     beeper
                     bitwarden-desktop
                     # boxbuddy
-                    bun
+                    # bun
                     cacert
                     cloudflared
                     coreutils

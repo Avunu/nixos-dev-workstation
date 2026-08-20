@@ -2,6 +2,7 @@
   "name": "global-npm-tools",
   "version": "1.0.0",
   "dependencies": {
+    "@oven/bun-linux-x64": "^1.4.0",
     "bun": "^1.4.0"
   },
   "scripts": {

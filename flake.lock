@@ -603,8 +603,11 @@
       "locked": {
         "lastModified": 1786457501,
         "narHash": "sha256-r9gIvnI8NXbw0Oh0pP8prSI/0CwejFXZpketfZcU5xc=",
+        "lastModified": 1786457501,
+        "narHash": "sha256-r9gIvnI8NXbw0Oh0pP8prSI/0CwejFXZpketfZcU5xc=",
         "owner": "Avunu",
         "repo": "nixos-install-helper",
+        "rev": "bedbe5601103273f67de08146e7f7871e73229a9",
         "rev": "bedbe5601103273f67de08146e7f7871e73229a9",
         "type": "github"
       },
@@ -674,8 +677,11 @@
       "locked": {
         "lastModified": 1786704683,
         "narHash": "sha256-xYxcXdm0vU7CxNBmkJ0psfrRnW8FFg4DWBjEC3Ll2TI=",
+        "lastModified": 1786704683,
+        "narHash": "sha256-xYxcXdm0vU7CxNBmkJ0psfrRnW8FFg4DWBjEC3Ll2TI=",
         "owner": "Avunu",
         "repo": "nixos-rclone",
+        "rev": "3f9db8bcc7c2f4d163758add6aa6786ac8cd3d0a",
         "rev": "3f9db8bcc7c2f4d163758add6aa6786ac8cd3d0a",
         "type": "github"
       },

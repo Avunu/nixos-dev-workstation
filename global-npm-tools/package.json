@@ -2,12 +2,10 @@
   "name": "global-npm-tools",
   "version": "1.0.0",
   "dependencies": {
-    "@expo/image-utils": "^0.10.1",
-    "@img/sharp-linux-x64": "^0.34.5",
-    "@jxsuite/compiler": "^0.25.3",
-    "sharp": "*"
+    "bun": "^1.4.0"
   },
   "scripts": {
-    "upgrade": "npx npm-check-updates -u && npm install"
+    "upgrade": "npx npm-check-updates -u && npm install",
+    "bun-version": "bun --version"
   }
 }

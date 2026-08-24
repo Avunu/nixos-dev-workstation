@@ -382,7 +382,7 @@
                     inkscape
                     jq
                     killall
-                    libreoffice-fresh
+                    libreoffice-stable
                     msedit
                     nixd
                     nixfmt

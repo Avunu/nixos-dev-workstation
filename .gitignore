@@ -6,3 +6,6 @@ result-*
 
 # Node modules
 node_modules
+
+# Nix installer
+installer

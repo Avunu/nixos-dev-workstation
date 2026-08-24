@@ -384,6 +384,7 @@
                     killall
                     libreoffice-stable
                     msedit
+                    nirimod
                     nixd
                     nixfmt
                     nodejs_26

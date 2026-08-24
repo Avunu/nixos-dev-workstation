@@ -251,6 +251,14 @@
               default = "password";
               description = "Initial password for the user";
             };
+            rootFilesystem = mkOption {
+              type = types.enum [
+                "btrfs"
+                "f2fs"
+              ];
+              default = "f2fs";
+              description = "Root filesystem type";
+            };
             sshKeys = mkOption {
               type = types.listOf types.str;
               default = [ ];
@@ -295,18 +303,19 @@
             ];
 
             microDesktop = {
-              hostName = cfg.hostName;
-              diskDevice = cfg.diskDevice;
               bootMode = cfg.bootMode;
-              timeZone = cfg.timeZone;
-              locale = cfg.locale;
-              username = cfg.username;
-              initialPassword = cfg.initialPassword;
-              stateVersion = cfg.stateVersion;
-              enableVpn = cfg.enableVpn;
+              diskDevice = cfg.diskDevice;
               enableSsh = true;
+              enableVpn = cfg.enableVpn;
+              hostName = cfg.hostName;
+              initialPassword = cfg.initialPassword;
+              locale = cfg.locale;
+              rootFilesystem = cfg.rootFilesystem;
               sshPasswordAuth = false;
               sshRootLogin = "prohibit-password";
+              stateVersion = cfg.stateVersion;
+              timeZone = cfg.timeZone;
+              username = cfg.username;
             };
 
             boot = {

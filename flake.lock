@@ -361,11 +361,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1787216589,
-        "narHash": "sha256-XtBw86QXg9HtTU1IlD3yTpIHAG0r5df6SCrpDVG/1Cc=",
+        "lastModified": 1787551962,
+        "narHash": "sha256-zfumhlJTGDKSILebSBa8nTKG76ByIPlLkGPAKjxaiwE=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "5aad5f64e621fc35fed0fddcc2b6e17ab662cf78",
+        "rev": "46e6a013fd49779cd2def2c98fa447f197da3fe7",
         "type": "github"
       },
       "original": {
@@ -603,11 +603,8 @@
       "locked": {
         "lastModified": 1786457501,
         "narHash": "sha256-r9gIvnI8NXbw0Oh0pP8prSI/0CwejFXZpketfZcU5xc=",
-        "lastModified": 1786457501,
-        "narHash": "sha256-r9gIvnI8NXbw0Oh0pP8prSI/0CwejFXZpketfZcU5xc=",
         "owner": "Avunu",
         "repo": "nixos-install-helper",
-        "rev": "bedbe5601103273f67de08146e7f7871e73229a9",
         "rev": "bedbe5601103273f67de08146e7f7871e73229a9",
         "type": "github"
       },
@@ -677,11 +674,8 @@
       "locked": {
         "lastModified": 1786704683,
         "narHash": "sha256-xYxcXdm0vU7CxNBmkJ0psfrRnW8FFg4DWBjEC3Ll2TI=",
-        "lastModified": 1786704683,
-        "narHash": "sha256-xYxcXdm0vU7CxNBmkJ0psfrRnW8FFg4DWBjEC3Ll2TI=",
         "owner": "Avunu",
         "repo": "nixos-rclone",
-        "rev": "3f9db8bcc7c2f4d163758add6aa6786ac8cd3d0a",
         "rev": "3f9db8bcc7c2f4d163758add6aa6786ac8cd3d0a",
         "type": "github"
       },

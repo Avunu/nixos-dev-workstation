@@ -385,6 +385,7 @@
                     powershell
                     pre-commit
                     rclone
+                    remmina
                     ripgrep
                     rustdesk-flutter
                     scrcpy

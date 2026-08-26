@@ -463,8 +463,8 @@
                   glib
                   glibc
                   gperf
-                  gtk3.out
-                  gtk4.out
+                  gtk3
+                  gtk4
                   harfbuzz
                   khronos-ocl-icd-loader
                   libaio
@@ -556,8 +556,6 @@
                   unzip
                   util-linux
                   vips
-                  # vulkan-loader
-                  # vulkan-tools
                   wayland
                   webkitgtk_4_1
                   zlib-ng

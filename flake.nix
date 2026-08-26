@@ -444,6 +444,7 @@
                   at-spi2-atk
                   at-spi2-core
                   bison
+                  brotli
                   bzip2
                   cairo
                   cups

@@ -327,7 +327,10 @@
               sessionVariables = {
                 PATH = [ "$HOME/.local/bin" ];
               };
-              variables.SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
+              variables = {
+                EDITOR = "edit";
+                SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
+              };
               systemPackages =
                 with pkgs;
                 lib.flatten [
@@ -355,16 +358,12 @@
                     install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
                   '')
                   [
-                    # android-tools
                     appimage-run
                     beeper
                     bitwarden-desktop
-                    # boxbuddy
-                    # bun
                     cacert
                     cloudflared
                     coreutils
-                    # distrobox
                     dnslookup
                     docker-compose
                     file
@@ -384,11 +383,13 @@
                     killall
                     libreoffice-stable
                     msedit
+                    msedit
                     nirimod
                     nixd
                     nixfmt
                     nodejs_26
                     obsidian
+                    openlogi
                     pkg-config
                     podman-compose
                     podman-desktop
@@ -401,7 +402,6 @@
                     scrcpy
                     screen
                     service-wrapper
-                    solaar
                     stdenv.cc
                     thunderbird-latest
                     typescript

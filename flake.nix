@@ -109,6 +109,77 @@
         with lib;
         let
           cfg = config.devWorkstation;
+
+          # Chromium-family hardware acceleration flags.
+          #
+          # Every Chromium and Electron app on this workstation ships with
+          # VA-API off. The hardware is there — on Kaby Lake, `vainfo` reports
+          # the iHD driver with H.264, HEVC, VP8, VP9 and JPEG decode plus
+          # H.264/HEVC encode, and a VA-API transcode of the same clip costs
+          # 69% of one CPU against 293% for the software path — but nothing
+          # reaches for it. Reading drm-engine-video out of /proc/*/fdinfo
+          # across every browser and Electron process on a machine that had
+          # been up 22 hours returned exactly zero nanoseconds: not one frame
+          # had ever been decoded on the video engine. Every video these apps
+          # play is decoded on a CPU that is already the bottleneck.
+          #
+          # The Vaapi* features are listed together because Chromium's own
+          # gate has moved between them across releases and it ignores names
+          # it does not recognise, so naming several is safe and naming one is
+          # a bet on a version. WaylandWindowDecorations is repeated from the
+          # nixpkgs wrappers' own NIXOS_OZONE_WL block: a second
+          # --enable-features overrides the first rather than merging with it,
+          # so anything that block would have set has to be restated here.
+          #
+          # --ignore-gpu-blocklist is aimed at Claude Desktop specifically
+          # (see claudeDesktop below) and is inert where the GPU is already in
+          # use, which for Chrome and VSCode it demonstrably is — 55 s and
+          # 302 s of render-engine time respectively over that same 22 hours.
+          chromiumGpuFlags = concatStringsSep " " [
+            "--ignore-gpu-blocklist"
+            "--enable-zero-copy"
+            "--enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoDecoder,VaapiVideoEncoder,VaapiIgnoreDriverChecks,WaylandWindowDecorations"
+          ];
+
+          # Claude Desktop, with the flags above.
+          #
+          # Unlike its Electron siblings it does no GPU work at all: zero
+          # nanoseconds on every engine across all of its processes over 22
+          # hours, while VSCode — same Chromium, same session — accumulated
+          # 302 s on the render engine. Its live GPU process carried
+          # --use-gl=disabled, which a freshly-created profile does not, so
+          # the app is falling back to software compositing at some point
+          # during a session rather than being configured that way.
+          #
+          # --ignore-gpu-blocklist is the standard remedy for that fallback
+          # and it does change what the GPU process is launched with. It has
+          # NOT been shown to restore GPU compositing here, because the
+          # fallback takes hours to reproduce and a short run renders nothing
+          # measurable either way. Treat this one as a mitigation to verify in
+          # normal use, not as a fix already demonstrated:
+          #
+          #   grep -H drm-engine /proc/$(pgrep -f 'claude-desktop.*gpu-process')/fdinfo/* \
+          #     | grep -v ':\s*0 ns'
+          #
+          # A wrapper rather than an override because the package comes from
+          # the llm-agents flake and takes no commandLineArgs argument. The
+          # .desktop files launch it as bare `claude-desktop` off PATH, so
+          # they pick this up without needing to be rewritten.
+          claudeDesktop =
+            let
+              base = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop;
+            in
+            pkgs.symlinkJoin {
+              name = "claude-desktop-accelerated";
+              paths = [ base ];
+              nativeBuildInputs = [ pkgs.makeWrapper ];
+              postBuild = ''
+                wrapProgram $out/bin/claude-desktop \
+                  --add-flags ${escapeShellArg chromiumGpuFlags}
+              '';
+              inherit (base) meta;
+            };
+
           editRcloneConfig = pkgs.writeShellApplication {
             name = "edit-rclone-config";
             runtimeInputs = with pkgs; [
@@ -292,13 +363,24 @@
             # signature verification rather than disabling it.
             nixpkgs.overlays = [
               (final: prev: {
-                vscode = prev.vscode.overrideAttrs (old: {
-                  postFixup = (old.postFixup or "") + ''
-                    find "$out/lib/vscode/resources/app" \
-                      -path '*/@vscode/vsce-sign/bin/vsce-sign' \
-                      -exec chmod +x {} +
-                  '';
-                });
+                # Both browsers take their launch flags through the
+                # commandLineArgs override argument, which the nixpkgs wrappers
+                # append to the exec line. See chromiumGpuFlags above for what
+                # is being passed and why.
+                google-chrome = prev.google-chrome.override {
+                  commandLineArgs = chromiumGpuFlags;
+                };
+                vscode =
+                  (prev.vscode.override {
+                    commandLineArgs = chromiumGpuFlags;
+                  }).overrideAttrs
+                    (old: {
+                      postFixup = (old.postFixup or "") + ''
+                        find "$out/lib/vscode/resources/app" \
+                          -path '*/@vscode/vsce-sign/bin/vsce-sign' \
+                          -exec chmod +x {} +
+                      '';
+                    });
               })
             ];
 
@@ -336,7 +418,7 @@
                 lib.flatten [
                   inputs.agenix.packages.${system}.default
                   inputs.llm-agents.packages.${system}.claude-code
-                  inputs.llm-agents.packages.${system}.claude-desktop
+                  claudeDesktop
                   editRcloneConfig
                   globalNpmTools
                   (python3.withPackages (

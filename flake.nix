@@ -446,6 +446,7 @@
                     cacert
                     cloudflared
                     coreutils
+                    dmidecode
                     dnslookup
                     docker-compose
                     file
@@ -472,6 +473,7 @@
                     nodejs_26
                     obsidian
                     openlogi
+                    pciutils
                     pkg-config
                     podman-compose
                     podman-desktop
@@ -488,6 +490,7 @@
                     thunderbird-latest
                     typescript
                     typescript-language-server
+                    usbutils
                     usbutils
                     vips
                     vlc

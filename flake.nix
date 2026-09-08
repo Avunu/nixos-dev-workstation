@@ -472,6 +472,8 @@
                     nixfmt
                     nodejs_26
                     obsidian
+                    opencode
+                    opencode-desktop
                     openlogi
                     pciutils
                     pkg-config

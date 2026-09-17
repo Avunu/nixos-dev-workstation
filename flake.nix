@@ -441,6 +441,7 @@
                   '')
                   [
                     appimage-run
+                    baobab
                     beeper
                     bitwarden-desktop
                     bun

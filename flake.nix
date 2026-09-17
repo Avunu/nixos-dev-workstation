@@ -420,7 +420,7 @@
                   inputs.llm-agents.packages.${system}.claude-code
                   claudeDesktop
                   editRcloneConfig
-                  globalNpmTools
+                  # globalNpmTools
                   (python3.withPackages (
                     ps: with ps; [
                       cffi
@@ -443,6 +443,7 @@
                     appimage-run
                     beeper
                     bitwarden-desktop
+                    bun
                     cacert
                     cloudflared
                     coreutils
@@ -465,7 +466,6 @@
                     jq
                     killall
                     libreoffice-stable
-                    msedit
                     msedit
                     nirimod
                     nixd

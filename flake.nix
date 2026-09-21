@@ -181,7 +181,7 @@
             };
 
           devShellInit = pkgs.writeShellApplication {
-            name = "dev-shell-init";
+            name = "dev-shell";
             runtimeInputs = with pkgs; [
               nix
             ];

@@ -180,6 +180,16 @@
               inherit (base) meta;
             };
 
+          devShellInit = pkgs.writeShellApplication {
+            name = "dev-shell-init";
+            runtimeInputs = with pkgs; [
+              nix
+            ];
+            text = ''
+              nix develop --no-pure-eval
+            '';
+          };
+
           editRcloneConfig = pkgs.writeShellApplication {
             name = "edit-rclone-config";
             runtimeInputs = with pkgs; [
@@ -425,6 +435,7 @@
                   inputs.agenix.packages.${system}.default
                   inputs.llm-agents.packages.${system}.claude-code
                   claudeDesktop
+                  devShellInit
                   editRcloneConfig
                   # globalNpmTools
                   (python3.withPackages (

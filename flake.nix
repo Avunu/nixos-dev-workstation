@@ -350,6 +350,11 @@
               default = "25.11";
               description = "NixOS state version";
             };
+            swapSizeGiB = mkOption {
+              type = types.ints.unsigned;
+              default = 32;
+              description = "Swap size in GiB";
+            };
             extraPackages = mkOption {
               type = types.listOf types.package;
               default = [ ];
@@ -411,7 +416,7 @@
               # upstream partition (two redundant swap tiers). It now relies
               # solely on microDesktop's disko-managed partition, sized to
               # match what the swapfile used to provide.
-              swapSizeGiB = 16;
+              swapSizeGiB = cfg.swapSizeGiB;
               timeZone = cfg.timeZone;
               username = cfg.username;
             };

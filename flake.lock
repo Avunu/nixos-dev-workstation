@@ -602,11 +602,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790086214,
-        "narHash": "sha256-RaS+u0p6FwVv0JfLhbsL0xzz8vVQJz6+wO9dl6L+oV0=",
+        "lastModified": 1790086285,
+        "narHash": "sha256-E+5uPpKSjb/TypLwi+5npCZbt/UKOFRX8frPHBeHU3M=",
         "owner": "Avunu",
         "repo": "nixos-install-helper",
-        "rev": "3d6cbdb5c5e7150f887408bfc4db470c9b75ffb0",
+        "rev": "87aa6038df262ef1cc9c9e85fc01071a9304a5cd",
         "type": "github"
       },
       "original": {

@@ -494,6 +494,7 @@
                     nixd
                     nixfmt
                     nodejs_26
+                    nushell
                     obsidian
                     opencode
                     opencode-desktop

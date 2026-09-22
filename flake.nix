@@ -481,6 +481,7 @@
                     github-desktop
                     gnome-disk-utility
                     gnome-logs
+                    gnome-text-editor
                     gnugrep
                     gnumake
                     gnused

@@ -368,6 +368,13 @@
           };
 
           config = {
+            # llm-agents
+            nix.settings = {
+              extra-substituters = [ "https://cache.numtide.com" ];
+              extra-trusted-public-keys = [
+                "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+              ];
+            };
             # nixpkgs' vscode (nixos-unstable, 1.129.x) ships the vsce-sign
             # extension-signature verifier without its execute bit. VSCode
             # execFile()s node_modules/@vscode/vsce-sign/bin/vsce-sign to check

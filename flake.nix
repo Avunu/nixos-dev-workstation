@@ -523,6 +523,7 @@
                     vlc
                     vscode
                     which
+                    wl-mirror
                     xmind
                   ]
                   cfg.extraPackages

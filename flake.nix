@@ -482,6 +482,7 @@
                     docker-compose
                     file
                     findutils
+                    firefox
                     gh
                     gimp
                     git

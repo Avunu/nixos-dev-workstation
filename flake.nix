@@ -13,9 +13,11 @@
     };
     nixos-micro-desktop = {
       url = "github:Avunu/nixos-micro-desktop";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-rclone = {
       url = "github:Avunu/nixos-rclone";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-install-helper = {
       url = "github:Avunu/nixos-install-helper";

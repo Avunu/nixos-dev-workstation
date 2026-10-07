@@ -574,6 +574,9 @@
                 enable = true;
                 config.safe.directory = [ "/etc/nixos" ];
               };
+              mosh = {
+                enable = true;
+              };
               nix-ld = {
                 enable = true;
                 libraries = with pkgs; [

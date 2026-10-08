@@ -181,7 +181,7 @@
             };
 
           devShellInit = pkgs.writeShellApplication {
-            name = "dev-shell";
+            name = "devsh";
             runtimeInputs = with pkgs; [
               nix
             ];
@@ -189,6 +189,12 @@
               nix develop --no-pure-eval
             '';
           };
+
+          customDistroIcon = (
+            pkgs.runCommand "custom-distro-icon" { } ''
+              install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
+            ''
+          );
 
           editRcloneConfig = pkgs.writeShellApplication {
             name = "edit-rclone-config";
@@ -447,6 +453,7 @@
                   inputs.agenix.packages.${system}.default
                   inputs.llm-agents.packages.${system}.claude-code
                   claudeDesktop
+                  customDistroIcon
                   devShellInit
                   editRcloneConfig
                   # globalNpmTools
@@ -465,9 +472,6 @@
                       wheel
                     ]
                   ))
-                  (pkgs.runCommand "custom-distro-icon" { } ''
-                    install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
-                  '')
                   [
                     appimage-run
                     baobab
@@ -508,6 +512,7 @@
                     opencode
                     opencode-desktop
                     openlogi
+                    p7zip
                     pciutils
                     pkg-config
                     podman-compose
@@ -525,6 +530,7 @@
                     thunderbird-latest
                     typescript
                     typescript-language-server
+                    unzip
                     usbutils
                     usbutils
                     vips

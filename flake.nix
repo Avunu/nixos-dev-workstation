@@ -180,6 +180,12 @@
               inherit (base) meta;
             };
 
+          customDistroIcon = (
+            pkgs.runCommand "custom-distro-icon" { } ''
+              install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
+            ''
+          );
+
           devShellInit = pkgs.writeShellApplication {
             name = "devsh";
             runtimeInputs = with pkgs; [
@@ -189,12 +195,6 @@
               nix develop --no-pure-eval
             '';
           };
-
-          customDistroIcon = (
-            pkgs.runCommand "custom-distro-icon" { } ''
-              install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
-            ''
-          );
 
           editRcloneConfig = pkgs.writeShellApplication {
             name = "edit-rclone-config";
@@ -237,6 +237,7 @@
               echo "Done. Secret updated."
             '';
           };
+
           # Build our global npm utilities cleanly from the lockfile
           globalNpmTools = pkgs.buildNpmPackage {
             pname = "global-npm-tools";
@@ -289,6 +290,21 @@
               ln -sf "$out/bin/bun" "$pkgdir/node_modules/@oven/bun-linux-x64/bin/bun"
               ln -sf "$out/bin/bun" "$pkgdir/node_modules/bun/bin/bun.exe"
               ln -sf "$out/bin/bun" "$pkgdir/node_modules/bun/bin/bunx.exe"
+            '';
+          };
+
+          systemOptimize = pkgs.writeShellApplication {
+            name = "system-optimize";
+            runtimeInputs = with pkgs; [
+              nix
+            ];
+            text = ''
+              nix-env --delete-generations old
+              sudo nix-env -p /nix/var/nix/profiles/system --delete-generations old
+              sudo nix-collect-garbage -d
+              rm -rf ~/.cache/nix
+              rm -rf ~/.cache/nix-eval-cache
+              sudo nix-store --optimize
             '';
           };
         in
@@ -456,6 +472,7 @@
                   customDistroIcon
                   devShellInit
                   editRcloneConfig
+                  systemOptimize
                   # globalNpmTools
                   (python3.withPackages (
                     ps: with ps; [

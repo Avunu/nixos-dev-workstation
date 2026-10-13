@@ -546,7 +546,6 @@
                     stdenv.cc
                     thunderbird-latest
                     typescript
-                    typescript-language-server
                     unzip
                     usbutils
                     usbutils

@@ -56,10 +56,15 @@
         hints.diskDevice = "disk-device";
         assets = [
           {
+            # Optional: nothing in this module declares age.secrets, so the
+            # agenix module stays disabled and a machine installs and boots
+            # fine without the key. It is only needed once a consumer adds
+            # secrets of its own. Unset, the unattended ISO is built without
+            # it and the guided/network installers just offer to provide it.
             name = "agenix-key";
             target = "/etc/agenix/key";
             mode = "0400";
-            required = true;
+            required = false;
             source = {
               env = "agenix__key";
               prompt = "paste";

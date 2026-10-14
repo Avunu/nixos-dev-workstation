@@ -9,7 +9,7 @@ A reusable NixOS module for Avunu development workstations. Builds on top of [ni
 -   **Productivity**: Google Chrome, LibreOffice, Obsidian, Inkscape, GIMP, VLC
 -   **Containers**: Podman with Docker compatibility (dockerCompat + socket)
 -   **File sync**: Incorporates the rclone bisync module for file share sync and mount
--   **Secrets**: Enables Agenix for encrypted credentials (such as rclone config)
+-   **Secrets**: Agenix is available for encrypted credentials (such as rclone config); the age key is optional and only needed once you add secrets
 -   **SSH**: Bitwarden SSH agent socket pre-configured
 -   **System management**: direnv + nix-direnv, nix-ld, AppImage support
 
@@ -18,9 +18,9 @@ A reusable NixOS module for Avunu development workstations. Builds on top of [ni
 ```
 nixos-dev-workstation/
 ├── flake.nix          # Module definition (nixosModules.devWorkstation)
-├── secrets.nix        # Agenix public key definitions
+├── secrets.nix        # (optional) Agenix public key definitions
 ├── secrets/
-│   └── rclone.age     # Encrypted rclone credentials
+│   └── rclone.age     # (optional) Encrypted rclone credentials
 └── local/
     ├── flake.nix      # Example consumer configuration (customize per machine)
     ├── deploy.sh      # Deployment script (remote or local)
@@ -40,7 +40,7 @@ The interactive installer will prompt for all configuration values (hostname, us
 ## Prerequisites
 
 -   A machine with Nix installed (for remote deployment) or a NixOS live boot USB (for local installation)
--   The age private key for decrypting secrets
+-   (Optional) The age private key, only if you use agenix secrets
 -   SSH access to the target machine (for remote deployment)
 -   The target machine must be booted into a Linux environment accessible via SSH (remote) or directly (local)
 
@@ -129,11 +129,11 @@ sudo nix --experimental-features 'nix-command flakes' run github:Avunu/nixos-dev
 
 The installer will:
 
-1.  Prompt for hostname, username, password, timezone, locale, boot mode, disk, SSH keys, VPN, and agenix key
+1.  Prompt for hostname, username, password, timezone, locale, boot mode, disk, SSH keys, VPN, and (optionally) an agenix key
 2.  Show a summary and ask for confirmation
 3.  Partition and format the disk via disko
 4.  Run `nixos-install`
-5.  Place the flake and agenix key on the installed system
+5.  Place the flake (and the agenix key, if you provided one) on the installed system
 6.  Tell you to remove the USB and reboot
 
 ### Remote Deployment (via nixos-anywhere)
@@ -153,14 +153,15 @@ cd local/
 
 **What happens:**
 
-1.  The script looks for `./agenix-key`. If not found, it prompts you to paste the age private key.
-2.  Copies `flake.nix` and the agenix key into a temporary directory.
-3.  Runs `nixos-anywhere` which:
+1.  Copies `flake.nix` into a temporary directory.
+2.  Runs `nixos-anywhere` which:
     -   SSHs into `root@<ip-address>`
     -   Partitions and formats the disk via disko
     -   Installs NixOS with your configuration
-    -   Copies the extra files (flake + key) onto the new system
-4.  The machine reboots into the new NixOS installation.
+    -   Copies the extra files (the flake) onto the new system
+3.  The machine reboots into the new NixOS installation.
+
+No agenix key is needed. If you use agenix secrets, see [Secrets Management](#secrets-management) for providing one.
 
 **Requirements:**
 
@@ -192,16 +193,20 @@ Boot from it, connect to the internet, and run the installer command from Quick 
 
 ## Secrets Management
 
-### The Agenix Key
+### The Agenix Key (optional)
 
-Each deployed machine needs the age private key at `/etc/agenix/key`. This key is used at system activation time to decrypt secrets (currently just the rclone config).
+The age private key is **optional**. The module does not declare any `age.secrets` itself, so the agenix module stays disabled and a machine installs, boots and updates without a key. You only need one once you add secrets (see [Adding More Secrets](#adding-more-secrets)); a machine that declares secrets but has no key will fail to decrypt them at activation.
 
-**Where to get the key:** The age private key should be stored securely (e.g., in Bitwarden). It corresponds to one of the public keys listed in `secrets.nix`.
+When used, the key lives at `/etc/agenix/key` (mode `0400`) and decrypts secrets at system activation time. It should be stored securely (e.g., in Bitwarden) and corresponds to one of the public keys listed in `secrets.nix`.
 
-**Providing the key during deployment:**
+**Providing the key:**
 
--   **Option A:** Place it as `local/agenix-key` before running `deploy.sh` (the file is gitignored)
--   **Option B:** Paste it interactively when the deploy script prompts
+-   **Interactive / unattended installer:** export it as `agenix__key` (for example via an agenix-shell devShell), or answer the "Provide asset 'agenix-key'?" prompt in the guided installer. Skip it and the install proceeds without one.
+-   **`deploy.sh` or an existing machine:** copy it into place yourself:
+
+    ```bash
+    sudo install -D -m 0400 agenix-key /etc/agenix/key
+    ```
 
 ### Creating/Editing Secrets
 

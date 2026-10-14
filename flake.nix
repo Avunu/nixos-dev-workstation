@@ -53,6 +53,18 @@
         ];
         flakeStyle = "local";
         upstream = "github:Avunu/nixos-dev-workstation";
+        # `nix run github:Avunu/nixos-dev-workstation#new-host` creates a private
+        # Avunu/host-<name> repo for one machine, which the machine then tracks
+        # (see the readme's "Managed from a host repo").
+        hostRepo = {
+          owner = "Avunu";
+          adminKeys = [
+            # kevin
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOv4SpIhHJqtRaYBRQOin4PTDUxRwo7ozoQHTUFjMGLW"
+            # gideon
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHZ2QESOCg6FpzUrq/7dmsFZV9WjUWOE/YA8ywNj4xJb"
+          ];
+        };
         hints.diskDevice = "disk-device";
         assets = [
           {
@@ -61,6 +73,8 @@
             # fine without the key. It is only needed once a consumer adds
             # secrets of its own. Unset, the unattended ISO is built without
             # it and the guided/network installers just offer to provide it.
+            # (A host repo uses the machine's SSH host key instead; this key
+            # is the alternative for a machine without one.)
             name = "agenix-key";
             target = "/etc/agenix/key";
             mode = "0400";
@@ -114,6 +128,9 @@
         with lib;
         let
           cfg = config.devWorkstation;
+
+          # Installed from, and tracking, its own host repository.
+          repoManaged = config.installHelper.enable && config.installHelper.flakeStyle == "repo";
 
           # Chromium-family hardware acceleration flags.
           #
@@ -211,7 +228,11 @@
               set -euo pipefail
               TMPCONF="$(mktemp --suffix=.conf)"
               trap 'rm -f "$TMPCONF"' EXIT
-              cd /etc/nixos
+              # A checkout of the machine's host repo when run from one;
+              # otherwise the local install's /etc/nixos.
+              if [ ! -f secrets.nix ]; then
+                cd /etc/nixos
+              fi
 
               SECRET="secrets/rclone.age"
               IDENTITY_FLAG=""
@@ -318,6 +339,10 @@
             inputs.nixos-micro-desktop.nixosModules.microDesktop
             inputs.nixos-rclone.nixosModules.default
             inputs.agenix.nixosModules.default
+            # For installHelper.flakeStyle/repo, read below. mkProject imports
+            # the same file into its install systems; the module system
+            # de-duplicates it by path.
+            inputs.nixos-install-helper.nixosModules.installHelper
           ];
 
           options.devWorkstation = {
@@ -395,6 +420,26 @@
           };
 
           config = {
+            # Every agenix identity this machine might have, so secrets decrypt
+            # whichever one it was given: the SSH host key (a host repo mints it)
+            # or the optional installer asset. agenix skips paths that don't exist.
+            age.identityPaths = mkDefault (
+              [ "/etc/agenix/key" ]
+              ++ map (k: k.path) (
+                filter (k: k.type == "ed25519" || k.type == "rsa") config.services.openssh.hostKeys
+              )
+            );
+
+            # Inert unless something turns it on: mkProject does (its install
+            # systems), the /etc/nixos flake of a local install does not.
+            installHelper = {
+              enable = mkDefault false;
+              # micro-desktop's system-upgrade timer is the upgrade mechanism
+              # (it waits for an idle, unmetered machine); point it at the repo
+              # rather than running system.autoUpgrade beside it.
+              repo.autoUpgrade = mkIf repoManaged false;
+            };
+
             # llm-agents
             nix.settings = {
               extra-substituters = [ "https://cache.numtide.com" ];
@@ -452,6 +497,7 @@
               # match what the swapfile used to provide.
               swapSizeGiB = cfg.swapSizeGiB;
               timeZone = cfg.timeZone;
+              upgradeFlake = mkIf repoManaged config.installHelper.repo.flakeRef;
               username = cfg.username;
             };
 

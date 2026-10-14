@@ -240,6 +240,29 @@ This opens your `$EDITOR` with the decrypted content. Paste your rclone configur
     ```
     
 
+## Managed from a host repo
+
+Instead of a local `/etc/nixos`, a machine can live in its own private
+repository, `Avunu/host-<name>`, and track it: push, and its daily
+`system-upgrade` switches to the new configuration.
+
+```bash
+nix run github:Avunu/nixos-dev-workstation#new-host
+cd host-<name> && nix run     # network install or an unattended ISO
+```
+
+`new-host` asks the usual installer questions, then creates the repo with the
+answers, a fresh SSH host key for the machine (encrypted to the admins), and a
+read-only GitHub token encrypted to the admins and that host key. The token is
+a fine-grained PAT, resource owner Avunu, **Contents: read-only** on the host
+repos. On the machine agenix decrypts it with the host key, and it is pulled
+into nix.conf as `access-tokens`, never into the Nix store. Flake input updates
+arrive in the repo as dependabot pull requests, merged once the configuration
+still evaluates.
+
+The admin keys are listed in `hostRepo.adminKeys` in this flake. The machine
+decrypts with its SSH host key, or with `/etc/agenix/key` when it has one.
+
 ## Post-Installation
 
 ### First Login

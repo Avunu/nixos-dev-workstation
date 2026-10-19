@@ -423,7 +423,7 @@
             # Every agenix identity this machine might have, so secrets decrypt
             # whichever one it was given: the SSH host key (a host repo mints it)
             # or the optional installer asset. agenix skips paths that don't exist.
-            age.identityPaths = mkDefault (
+            age.identityPaths = mkForce (
               [ "/etc/agenix/key" ]
               ++ map (k: k.path) (
                 filter (k: k.type == "ed25519" || k.type == "rsa") config.services.openssh.hostKeys

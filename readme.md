@@ -12,6 +12,7 @@ A reusable NixOS module for Avunu development workstations. Builds on top of [ni
 -   **Secrets**: Agenix is available for encrypted credentials (such as rclone config); the age key is optional and only needed once you add secrets
 -   **SSH**: Bitwarden SSH agent socket pre-configured
 -   **System management**: direnv + nix-direnv, nix-ld, AppImage support
+-   **Nix**: [Determinate Nix](https://docs.determinate.systems/determinate-nix/) through its NixOS module; `determinate-nixd` runs the daemon (see [Determinate Nix](#determinate-nix))
 
 ## Repository Structure
 
@@ -52,6 +53,13 @@ Copy `local/flake.nix` and customize it for your machine:
 
 ```nix
 {
+  # Where Determinate Nix is fetched from while the machine is still on
+  # nixpkgs' Nix (the first switch, an installer). See "Determinate Nix".
+  nixConfig = {
+    extra-substituters = [ "https://install.determinate.systems" ];
+    extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
+  };
+
   inputs = {
     nixpkgs.url = "github:numtide/nixpkgs-unfree?ref=nixos-unstable";
     nixos-dev-workstation = {
@@ -190,6 +198,46 @@ sudo dd if=nixos-minimal-*.iso of=/dev/sdX bs=4M status=progress
 ```
 
 Boot from it, connect to the internet, and run the installer command from Quick Start above.
+
+## Determinate Nix
+
+The module imports Determinate's NixOS module, so every machine runs
+[Determinate Nix](https://docs.determinate.systems/determinate-nix/) with
+`determinate-nixd` as the daemon. `determinate-nixd` owns `/etc/nix/nix.conf`;
+what NixOS generates from `nix.settings` (here, in nixos-micro-desktop and in
+your own flake) lands in `/etc/nix/nix.custom.conf`, which it includes. Its own
+`extra-substituters` and `extra-experimental-features` come after that include,
+so your settings add to them rather than replace them. The Nix version follows
+the `determinate` input's lock, not nixpkgs'. `determinate.enable = false`
+turns it off.
+
+`nixpkgs#foo` and `<nixpkgs>` still resolve to the nixpkgs the system was built
+from. Determinate would point them at its own weekly nixpkgs tarball; the
+override in `flake.nix` keeps the previous behaviour, and deleting it takes
+Determinate's.
+
+### Moving an existing machine to Determinate Nix
+
+Determinate Nix comes from `install.determinate.systems`, not `cache.nixos.org`,
+and a machine still on nixpkgs' Nix does not know that cache yet. Do the first
+switch by hand with it named, so the daily `system-upgrade` does not compile
+Nix on its own:
+
+```bash
+sudo nixos-rebuild switch --flake <flake> \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
+```
+
+`<flake>` is `/etc/nixos`, or the host repo's flake reference for a machine
+managed from one. After that `determinate-nixd` adds the cache itself, so
+nothing more is needed, including for later Determinate Nix upgrades. Building
+this flake from somewhere that is not on Determinate yet (`nix run`,
+`nix build .#installerIso`) needs the same two options; the flake's
+`nixConfig` offers them, and `--accept-flake-config` accepts them without the
+prompt. A host repo's own flake needs its own `nixConfig` for the same reason.
+
+`determinate-nixd login` is only for FlakeHub Cache and private flakes.
 
 ## Secrets Management
 

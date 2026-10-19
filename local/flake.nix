@@ -1,4 +1,13 @@
 {
+  # Where Determinate Nix is fetched from while this machine is still on
+  # nixpkgs' Nix (the first switch, an installer). See the readme.
+  nixConfig = {
+    extra-substituters = [ "https://install.determinate.systems" ];
+    extra-trusted-public-keys = [
+      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-dev-workstation = {

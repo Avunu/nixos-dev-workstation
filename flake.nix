@@ -1,8 +1,24 @@
 {
   description = "NixOS Development Workstation";
 
+  # Determinate Nix is built from nix-src, which cache.nixos.org does not
+  # carry. Without this, the first `nix run` / `nix build` of this flake from a
+  # machine that is not yet on Determinate compiles Nix itself. Once a machine
+  # runs Determinate Nix, determinate-nixd configures its own caches and this
+  # is no longer needed there. Same key as the --option flags in the readme.
+  nixConfig = {
+    extra-substituters = [ "https://install.determinate.systems" ];
+    extra-trusted-public-keys = [
+      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    determinate = {
+      url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -208,10 +224,12 @@
             ''
           );
 
+          # config.nix.package rather than pkgs.nix in both scripts below: it is
+          # the Nix the daemon is running (Determinate Nix), not nixpkgs'.
           devShellInit = pkgs.writeShellApplication {
             name = "devsh";
-            runtimeInputs = with pkgs; [
-              nix
+            runtimeInputs = [
+              config.nix.package
             ];
             text = ''
               nix develop --no-pure-eval
@@ -321,8 +339,8 @@
 
           systemOptimize = pkgs.writeShellApplication {
             name = "system-optimize";
-            runtimeInputs = with pkgs; [
-              nix
+            runtimeInputs = [
+              config.nix.package
             ];
             text = ''
               nix-env --delete-generations old
@@ -336,6 +354,14 @@
         in
         {
           imports = [
+            # Swaps nix.package for Determinate Nix and runs the daemon as
+            # determinate-nixd, which owns /etc/nix/nix.conf; everything NixOS
+            # generates from nix.settings (here and in microDesktop) moves to
+            # nix.custom.conf, which it includes. determinate-nixd appends its
+            # own extra-substituters and extra-experimental-features after
+            # that include, so those settings add to Determinate's rather than
+            # replace them. `determinate.enable = false` backs it out.
+            inputs.determinate.nixosModules.default
             inputs.nixos-micro-desktop.nixosModules.microDesktop
             inputs.nixos-rclone.nixosModules.default
             inputs.agenix.nixosModules.default
@@ -439,6 +465,21 @@
               # rather than running system.autoUpgrade beside it.
               repo.autoUpgrade = mkIf repoManaged false;
             };
+
+            # Determinate's module points the nixpkgs registry entry at its own
+            # weekly nixpkgs tarball. It does so at priority 750, which beats
+            # the mkDefault pin NixOS puts on the nixpkgs this system was built
+            # from (nixpkgs.flake.setFlakeRegistry), so without this `nixpkgs#foo`
+            # and <nixpkgs> would quietly stop meaning "the revision I am
+            # running". Same pin as before, at a priority between the two.
+            # Deleting it takes Determinate's weekly nixpkgs instead, and lets
+            # go of the ~210 MB source tree this pin keeps in the closure.
+            nix.registry.nixpkgs.to = mkIf config.nixpkgs.flake.setFlakeRegistry (
+              mkOverride 500 {
+                type = "path";
+                path = config.nixpkgs.flake.source;
+              }
+            );
 
             # llm-agents
             nix.settings = {

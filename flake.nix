@@ -511,7 +511,7 @@
                 PATH = [ "$HOME/.local/bin" ];
               };
               variables = {
-                EDITOR = "edit";
+                EDITOR = "${pkgs.msedit}/bin/edit";
                 SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
               };
               systemPackages =

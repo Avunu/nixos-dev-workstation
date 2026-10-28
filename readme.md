@@ -18,17 +18,31 @@ A reusable NixOS module for Avunu development workstations. Builds on top of [ni
 
 ```
 nixos-dev-workstation/
-├── flake.nix          # Module definition (nixosModules.devWorkstation)
-├── secrets.nix        # (optional) Agenix public key definitions
-├── secrets/
-│   └── rclone.age     # (optional) Encrypted rclone credentials
+├── flake.nix                # Module (nixosModules.devWorkstation), lib.mkHost, installers
 └── local/
-    ├── flake.nix      # Example consumer configuration (customize per machine)
-    ├── deploy.sh      # Deployment script (remote or local)
-    └── agenix-key     # (optional) Age private key for deployment
+    ├── flake.nix            # Example /etc/nixos-style consumer configuration
+    └── deploy.sh            # Deployment script (remote or local)
 ```
 
 ## Quick Start
+
+### A new machine (recommended)
+
+Each machine gets its own repository, which it then tracks. Make an empty
+directory, run the wizard in it, and let it create the repository:
+
+```bash
+mkdir host-<name> && cd host-<name>
+nix run github:Avunu/nixos-dev-workstation
+```
+
+The wizard asks the installer questions, then creates the repository, generates
+the machine's agenix identity, commits, offers to push it to GitHub
+(`Avunu/host-<name>`, private by default), and continues with the new
+repository's own `nix run`: a network install (nixos-anywhere) or an offline
+ISO. See [Managed from a host repo](#managed-from-a-host-repo).
+
+### A one-off local install
 
 Boot a NixOS live USB, connect to the internet, then:
 
@@ -241,9 +255,13 @@ prompt. A host repo's own flake needs its own `nixConfig` for the same reason.
 
 ## Secrets Management
 
-### The Agenix Key (optional)
+### The Agenix Key
 
-The age private key is **optional**. The module does not declare any `age.secrets` itself, so the agenix module stays disabled and a machine installs, boots and updates without a key. You only need one once you add secrets (see [Adding More Secrets](#adding-more-secrets)); a machine that declares secrets but has no key will fail to decrypt them at activation.
+A host repository always has one: the bootstrap generates it and keeps it as
+`secrets/key.age`, encrypted to the operators only, and every install path
+writes it to `/etc/agenix/key` (see [Managed from a host repo](#managed-from-a-host-repo)).
+
+For a local (`/etc/nixos`) install the age private key is **optional**. The module does not declare any `age.secrets` itself, so the agenix module stays disabled and a machine installs, boots and updates without a key. You only need one once you add secrets (see [Adding More Secrets](#adding-more-secrets)); a machine that declares secrets but has no key will fail to decrypt them at activation.
 
 When used, the key lives at `/etc/agenix/key` (mode `0400`) and decrypts secrets at system activation time. It should be stored securely (e.g., in Bitwarden) and corresponds to one of the public keys listed in `secrets.nix`.
 
@@ -290,26 +308,47 @@ This opens your `$EDITOR` with the decrypted content. Paste your rclone configur
 
 ## Managed from a host repo
 
-Instead of a local `/etc/nixos`, a machine can live in its own private
-repository, `Avunu/host-<name>`, and track it: push, and its daily
-`system-upgrade` switches to the new configuration.
+This is the default for a new machine: instead of a local `/etc/nixos`, it
+lives in its own repository and tracks it. Push to the default branch and its
+daily `system-upgrade` switches to the new configuration. The repository's
+`flake.lock` decides every version, so update it there, never on the machine.
 
 ```bash
-nix run github:Avunu/nixos-dev-workstation#new-host
-cd host-<name> && nix run     # network install or an unattended ISO
+mkdir host-<name> && cd host-<name>
+nix run github:Avunu/nixos-dev-workstation    # creates the repo, then installs
 ```
 
-`new-host` asks the usual installer questions, then creates the repo with the
-answers, a fresh SSH host key for the machine (encrypted to the admins), and a
-read-only GitHub token encrypted to the admins and that host key. The token is
-a fine-grained PAT, resource owner Avunu, **Contents: read-only** on the host
-repos. On the machine agenix decrypts it with the host key, and it is pulled
-into nix.conf as `access-tokens`, never into the Nix store. Flake input updates
-arrive in the repo as dependabot pull requests, merged once the configuration
-still evaluates.
+The bootstrap (also `nix run github:Avunu/nixos-dev-workstation#bootstrap`),
+the template it writes and `lib.mkHost` come from
+[nixos-install-helper](https://github.com/Avunu/nixos-install-helper); this
+flake's `lib.mkHost` is that function with `devWorkstation` filled in. A new
+repository holds:
 
-The admin keys are listed in `hostRepo.adminKeys` in this flake. The machine
-decrypts with its SSH host key, or with `/etc/agenix/key` when it has one.
+| File | What it holds |
+| --- | --- |
+| `flake.nix` | one `nixos-dev-workstation.lib.mkHost` call with `repo = "github:<owner>/<repo>"` |
+| `devWorkstation-settings.json` | the installer's answers |
+| `host.nix` | anything else for this machine |
+| `secrets.nix` | who can decrypt each secret |
+| `secrets/key.age` | the machine's **agenix identity**, freshly generated, encrypted to the operators only |
+| `secrets/github-token.age` | a read-only GitHub token (private repos), encrypted to the operators and the identity |
+
+The operators are the SSH keys in the settings (`sshKeys`) plus the standing
+admins in `adminKeys` in this repository's `flake.nix`. The machine never
+decrypts with its SSH host key: entering the repository's devShell (direnv
+`use flake`) decrypts `secrets/key.age` into `$agenix__key` with your SSH key,
+the wizard does the same without it, and every install path (`nix run`,
+`.#deploy`, `.#installerIso`) carries it to `/etc/agenix/key`. A reinstall onto
+a new disk therefore decrypts the same secrets without re-keying anything.
+
+The token is a fine-grained PAT with **Contents: read-only** on the host repo.
+On the machine agenix decrypts it and nix `!include`s it as `access-tokens`
+(`installHelper.githubTokenFile`); git gets it through a credential helper. It
+never enters the Nix store. Flake input updates arrive as dependabot pull
+requests, merged once the configuration still evaluates.
+
+Repositories made by the older `new-host` app (which called nixos-install-helper's
+`mkProject` with `flakeStyle = "repo"` directly) keep working unchanged.
 
 ## Post-Installation
 

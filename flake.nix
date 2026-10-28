@@ -55,55 +55,48 @@
       ];
       forAllSystems = f: lib.genAttrs supportedSystems f;
 
-      # Installer surface (nixos-install-helper). devWorkstation re-declares every
-      # technician-facing option and passes it through to microDesktop (and fixes
-      # enableSsh / ssh policy), so ONLY devWorkstation is a root — listing
-      # microDesktop too would prompt each shared option twice and write downstream
-      # values the passthrough immediately overrides.
-      ih = inputs.nixos-install-helper.lib.mkProject {
-        inherit nixpkgs self;
-        system = "x86_64-linux";
-        installModules = [ self.nixosModules.devWorkstation ];
-        optionRoots = [
-          "devWorkstation"
-        ];
-        flakeStyle = "local";
+      # This repository's own installer: a generic workstation whose identity
+      # is chosen at install time, living on as a small /etc/nixos flake that
+      # imports devWorkstation from here. Started in an empty directory, its
+      # wizard instead bootstraps a repository for one machine, whose flake
+      # calls lib.mkHost with `repo` (nixos-install-helper's lib.mkHost).
+      template = self.lib.mkHost {
+        inherit self;
         upstream = "github:Avunu/nixos-dev-workstation";
-        # `nix run github:Avunu/nixos-dev-workstation#new-host` creates a private
-        # Avunu/host-<name> repo for one machine, which the machine then tracks
-        # (see the readme's "Managed from a host repo").
-        hostRepo = {
-          owner = "Avunu";
-          adminKeys = [
-            # kevin
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOv4SpIhHJqtRaYBRQOin4PTDUxRwo7ozoQHTUFjMGLW"
-            # gideon
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHZ2QESOCg6FpzUrq/7dmsFZV9WjUWOE/YA8ywNj4xJb"
-          ];
-        };
-        hints.diskDevice = "disk-device";
-        assets = [
-          {
-            # Optional: nothing in this module declares age.secrets, so the
-            # agenix module stays disabled and a machine installs and boots
-            # fine without the key. It is only needed once a consumer adds
-            # secrets of its own. Unset, the unattended ISO is built without
-            # it and the guided/network installers just offer to provide it.
-            # (A host repo uses the machine's SSH host key instead; this key
-            # is the alternative for a machine without one.)
-            name = "agenix-key";
-            target = "/etc/agenix/key";
-            mode = "0400";
-            required = false;
-            source = {
-              env = "agenix__key";
-              prompt = "paste";
-            };
-          }
-        ];
       };
     in
     {
+      # nixos-install-helper's lib.mkHost with this project filled in: what this
+      # flake's own installer is built from, and the one call a host repo's
+      # flake makes.
+      lib.mkHost =
+        args:
+        inputs.nixos-install-helper.lib.mkHost (
+          {
+            inherit nixpkgs;
+            module = self.nixosModules.devWorkstation;
+            optionRoot = "devWorkstation";
+            installer.hints.diskDevice = "disk-device";
+            # New host repos: suggested owner, and keys every one's secrets are
+            # also encrypted to, beside the machine's own sshKeys.
+            defaultOwner = "Avunu";
+            adminKeys = [
+              # kevin
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOv4SpIhHJqtRaYBRQOin4PTDUxRwo7ozoQHTUFjMGLW"
+              # gideon
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHZ2QESOCg6FpzUrq/7dmsFZV9WjUWOE/YA8ywNj4xJb"
+            ];
+            # Determinate Nix is not in cache.nixos.org; without this, building
+            # a host repo from a machine not yet on Determinate compiles Nix.
+            nixConfig = {
+              extra-substituters = [ "https://install.determinate.systems" ];
+              extra-trusted-public-keys = [
+                "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+              ];
+            };
+          }
+          // args
+        );
 
       devShells = forAllSystems (
         system:
@@ -130,8 +123,8 @@
       # Installer artifacts (x86_64): settingsSchema + unattended/guided ISOs,
       # default = the unattended ISO. The old install-dev-workstation wrapper is
       # superseded by `nix run` (the wizard).
-      packages.x86_64-linux = ih.packages.x86_64-linux // {
-        default = ih.packages.x86_64-linux.installerIso;
+      packages.x86_64-linux = template.packages.x86_64-linux // {
+        default = template.packages.x86_64-linux.installerIso;
       };
 
       nixosModules.devWorkstation =
@@ -145,7 +138,7 @@
         let
           cfg = config.devWorkstation;
 
-          # Installed from, and tracking, its own host repository.
+          # Installed from, and tracking, its own host repository (lib.mkHost).
           repoManaged = config.installHelper.enable && config.installHelper.flakeStyle == "repo";
 
           # Chromium-family hardware acceleration flags.
@@ -446,11 +439,14 @@
           };
 
           config = {
-            # Every agenix identity this machine might have, so secrets decrypt
-            # whichever one it was given: the SSH host key (a host repo mints it)
-            # or the optional installer asset. agenix skips paths that don't exist.
+            # The pre-provisioned identity first: a host repo keeps it as
+            # secrets/key.age and every install path writes it here, so a
+            # reinstall (new disk, new SSH host key) decrypts the same secrets
+            # without a re-key. The SSH host keys stay as a fallback for
+            # machines whose secrets were encrypted to them. agenix skips
+            # paths that don't exist.
             age.identityPaths = mkForce (
-              [ "/etc/agenix/key" ]
+              [ config.installHelper.agenixKey ]
               ++ map (k: k.path) (
                 filter (k: k.type == "ed25519" || k.type == "rsa") config.services.openssh.hostKeys
               )
@@ -460,6 +456,11 @@
             # systems), the /etc/nixos flake of a local install does not.
             installHelper = {
               enable = mkDefault false;
+              # Where every install path puts a host repo's agenix identity
+              # (secrets/key.age). Also keeps its mode root-only. A host repo's
+              # GitHub token reaches nix and git through
+              # installHelper.githubTokenFile, which lib.mkHost sets.
+              agenixKey = inputs.nixos-install-helper.lib.agenixKeyPath;
               # micro-desktop's system-upgrade timer is the upgrade mechanism
               # (it waits for an idle, unmetered machine); point it at the repo
               # rather than running system.autoUpgrade beside it.
@@ -863,9 +864,9 @@
       # ================================================================
       # install / installTemplate systems (the latter pre-populates the offline
       # ISO closure, replacing the old devWorkstationTemplate).
-      nixosConfigurations = ih.nixosConfigurations;
+      nixosConfigurations = template.nixosConfigurations;
 
-      # configure / install / deploy / wizard (`nix run`) apps.
-      apps = ih.apps;
+      # configure / install / deploy / bootstrap / wizard (`nix run`) apps.
+      apps = template.apps;
     };
 }

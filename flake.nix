@@ -711,7 +711,6 @@
                   flac
                   fontconfig
                   freetype
-                  fuse2
                   fuse3
                   gdk-pixbuf
                   glib

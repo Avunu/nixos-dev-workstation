@@ -211,6 +211,50 @@
               inherit (base) meta;
             };
 
+          # Obsidian registers app:// with codeCache, so Chromium keeps V8
+          # bytecode for app.js in ~/.config/obsidian/Code Cache. When nixpkgs
+          # bumps the Electron underneath it (seen on 43.7.11 -> 43.8.3), the
+          # stale cache is not rejected: the renderer's own webFrame bootstrap
+          # throws "Cannot read properties of undefined (reading
+          # 'defineProperty')" and every vault window opens blank. Deleting
+          # the cache is the only fix, so do it whenever the package changes.
+          #
+          # The stamp is the obsidian store path, which changes with any
+          # Electron or Obsidian bump. If an instance is already running, the
+          # new launch just hands off to it; leave the stamp stale so the
+          # next cold start clears the cache instead of pulling it out from
+          # under the live process. The .desktop file launches bare
+          # `obsidian` off PATH, so it picks this wrapper up as-is.
+          obsidianWrapped =
+            let
+              base = pkgs.obsidian;
+              clearStaleCodeCache = pkgs.writeShellApplication {
+                name = "obsidian-clear-stale-code-cache";
+                runtimeInputs = [ pkgs.coreutils ];
+                text = ''
+                  dir="''${XDG_CONFIG_HOME:-$HOME/.config}/obsidian"
+                  stamp="$dir/.nix-code-cache-stamp"
+                  [ "$(cat "$stamp" 2>/dev/null)" = "${base}" ] && exit 0
+                  if lock=$(readlink "$dir/SingletonLock" 2>/dev/null) && kill -0 "''${lock##*-}" 2>/dev/null; then
+                    exit 0
+                  fi
+                  rm -rf "$dir/Code Cache"
+                  mkdir -p "$dir"
+                  printf '%s' "${base}" > "$stamp"
+                '';
+              };
+            in
+            pkgs.symlinkJoin {
+              name = "obsidian-${base.version}";
+              paths = [ base ];
+              nativeBuildInputs = [ pkgs.makeWrapper ];
+              postBuild = ''
+                wrapProgram $out/bin/obsidian \
+                  --run ${escapeShellArg "${lib.getExe clearStaleCodeCache} || true"}
+              '';
+              inherit (base) meta;
+            };
+
           customDistroIcon = (
             pkgs.runCommand "custom-distro-icon" { } ''
               install -D ${./logo.svg} $out/share/icons/hicolor/scalable/apps/distributor-logo.svg
@@ -565,6 +609,7 @@
                   customDistroIcon
                   devShellInit
                   editRcloneConfig
+                  obsidianWrapped
                   systemOptimize
                   # globalNpmTools
                   (python3.withPackages (
@@ -618,7 +663,6 @@
                     nixfmt
                     nodejs_26
                     nushell
-                    obsidian
                     opencode
                     opencode-desktop
                     openlogi

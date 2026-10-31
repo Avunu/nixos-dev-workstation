@@ -666,6 +666,7 @@
                     opencode
                     opencode-desktop
                     openlogi
+                    openssl
                     p7zip
                     pciutils
                     pkg-config

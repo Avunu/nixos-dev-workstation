@@ -663,8 +663,8 @@
                     nixfmt
                     nodejs_26
                     nushell
-                    opencode
-                    opencode-desktop
+                    #opencode
+                    #opencode-desktop
                     openlogi
                     openssl
                     p7zip

@@ -605,6 +605,8 @@
                 lib.flatten [
                   inputs.agenix.packages.${system}.default
                   inputs.llm-agents.packages.${system}.claude-code
+                  inputs.llm-agents.packages.${system}.opencode2
+                  inputs.llm-agents.packages.${system}.opencode2-desktop
                   claudeDesktop
                   customDistroIcon
                   devShellInit
@@ -665,8 +667,6 @@
                     nixfmt
                     nodejs_26
                     nushell
-                    opencode
-                    opencode-desktop
                     openlogi
                     openssl
                     p7zip

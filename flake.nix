@@ -654,6 +654,7 @@
                     gnumake
                     gnused
                     google-chrome
+                    gthumb
                     inkscape
                     jq
                     killall

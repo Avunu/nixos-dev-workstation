@@ -636,6 +636,7 @@
                     cacert
                     cloudflared
                     coreutils
+                    curtail
                     dmidecode
                     dnslookup
                     docker-compose
@@ -663,11 +664,12 @@
                     nixfmt
                     nodejs_26
                     nushell
-                    #opencode
-                    #opencode-desktop
+                    opencode
+                    opencode-desktop
                     openlogi
                     openssl
                     p7zip
+                    paper-clip
                     pciutils
                     pkg-config
                     podman-compose
@@ -682,6 +684,7 @@
                     screen
                     service-wrapper
                     stdenv.cc
+                    switcheroo
                     thunderbird-latest
                     typescript
                     unzip

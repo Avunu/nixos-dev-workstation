@@ -597,7 +597,7 @@
                 PATH = [ "$HOME/.local/bin" ];
               };
               variables = {
-                EDITOR = "${pkgs.msedit}/bin/edit";
+                # EDITOR = "${pkgs.msedit}/bin/edit";
                 SSH_AUTH_SOCK = "/home/${cfg.username}/.bitwarden-ssh-agent.sock";
               };
               systemPackages =
@@ -661,7 +661,7 @@
                     jq
                     killall
                     libreoffice-stable
-                    msedit
+                    # msedit
                     nirimod
                     nixd
                     nixfmt

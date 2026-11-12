@@ -498,7 +498,7 @@
 
             # disable the determinate nix garbage collector
             # since it has a performance overhead and we don't need it
-            determinate.determinateNixd = {
+            determinate = {
               garbageCollector.strategy = "disabled";
             };
 

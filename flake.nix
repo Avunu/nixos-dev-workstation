@@ -498,7 +498,8 @@
 
             # disable the determinate nix garbage collector
             # since it has a performance overhead and we don't need it
-            determinate = {
+            # Configure Determinate Nixd directly
+            environment.etc."determinate/config.json".text = builtins.toJSON {
               garbageCollector.strategy = "disabled";
             };
 

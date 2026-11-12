@@ -496,6 +496,12 @@
               )
             );
 
+            # disable the determinate nix garbage collector
+            # since it has a performance overhead and we don't need it
+            determinateNix.determinateNixd = {
+              garbageCollector.strategy = "disabled";
+            };
+
             # Inert unless something turns it on: mkProject does (its install
             # systems), the /etc/nixos flake of a local install does not.
             installHelper = {

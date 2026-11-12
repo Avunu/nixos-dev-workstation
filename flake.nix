@@ -680,7 +680,7 @@
                     rclone
                     remmina
                     ripgrep
-                    rustdesk-flutter
+                    rustdesk
                     scrcpy
                     screen
                     service-wrapper

@@ -597,6 +597,14 @@
             boot = {
               # kernelPackages = pkgs.linuxPackages_zen;
               plymouth.logo = ./logo.png;
+              # The kernel default (16384 queued events per inotify instance)
+              # overflows when a build, npm install or git checkout touches
+              # thousands of files at once under a recursive watcher, e.g.
+              # Odoo's `--dev=reload` ("Inotify queue overflowed; reconciling
+              # recursive watches"). max_user_watches/instances are already
+              # 524288 on NixOS; only the queue needs raising. The cost is
+              # kernel memory for events actually queued, not a reservation.
+              kernel.sysctl."fs.inotify.max_queued_events" = 524288;
             };
 
             environment = {

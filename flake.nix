@@ -885,7 +885,7 @@
 
             services = {
               # enable smart card readers
-              services.pcscd.enable = true;
+              pcscd.enable = true;
             };
 
             # overrides to allow rootless distrobox containers

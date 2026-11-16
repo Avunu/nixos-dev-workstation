@@ -881,6 +881,12 @@
                   zlib-ng
                 ];
               };
+              yubikey-manager = {
+                enable = true;
+              };
+              yubikey-touch-detector = {
+                enable = true;
+              };
             };
 
             services = {

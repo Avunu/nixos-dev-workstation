@@ -645,6 +645,7 @@
                     ]
                   ))
                   [
+                    age-plugin-yubikey
                     appimage-run
                     baobab
                     beeper
@@ -687,6 +688,7 @@
                     p7zip
                     paper-clip
                     pciutils
+                    pcsc-tools
                     pkg-config
                     podman-compose
                     podman-desktop
@@ -712,7 +714,6 @@
                     vscode
                     which
                     wl-mirror
-                    xmind
                   ]
                   cfg.extraPackages
                 ];
@@ -882,6 +883,21 @@
               };
             };
 
+            services = {
+              # enable smart card readers
+              services.pcscd.enable = true;
+            }
+
+            # overrides to allow rootless distrobox containers
+            system.activationScripts.subuid-persist = {
+              text = ''
+                echo "${cfg.username}:100000:65536" > /etc/subuid
+                echo "${cfg.username}:100000:65536" > /etc/subgid
+                chmod 644 /etc/subuid /etc/subgid
+              '';
+              deps = [ "users" ];
+            };
+
             users = {
               users = {
                 ${cfg.username} = {
@@ -895,16 +911,6 @@
                 };
                 root.openssh.authorizedKeys.keys = cfg.sshKeys;
               };
-            };
-
-            # overrides to allow rootless distrobox containers
-            system.activationScripts.subuid-persist = {
-              text = ''
-                echo "${cfg.username}:100000:65536" > /etc/subuid
-                echo "${cfg.username}:100000:65536" > /etc/subgid
-                chmod 644 /etc/subuid /etc/subgid
-              '';
-              deps = [ "users" ];
             };
 
             virtualisation = {

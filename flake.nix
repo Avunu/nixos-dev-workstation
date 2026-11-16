@@ -692,6 +692,7 @@
                     podman-desktop
                     powershell
                     pre-commit
+                    prek
                     rclone
                     remmina
                     ripgrep

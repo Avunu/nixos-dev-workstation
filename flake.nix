@@ -886,7 +886,7 @@
             services = {
               # enable smart card readers
               services.pcscd.enable = true;
-            }
+            };
 
             # overrides to allow rootless distrobox containers
             system.activationScripts.subuid-persist = {

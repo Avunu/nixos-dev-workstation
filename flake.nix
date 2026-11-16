@@ -758,6 +758,10 @@
               mosh = {
                 enable = true;
               };
+              nautilus-open-any-terminal = {
+                enable = true;
+                terminal = lib.getExe pkgs.ghostty;
+              };
               nix-ld = {
                 enable = true;
                 libraries = with pkgs; [
@@ -886,6 +890,7 @@
               };
               yubikey-touch-detector = {
                 enable = true;
+                libnotify = true;
               };
             };
 

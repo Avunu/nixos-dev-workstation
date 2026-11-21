@@ -11,3 +11,31 @@ updates:
     groups:
       nix:
         patterns: ["*"]
+
+  # Nix flake inputs of the local host configuration
+  - package-ecosystem: nix
+    directory: /local
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    labels: ["dependencies"]
+    commit-message:
+      prefix: chore
+    groups:
+      nix-local:
+        patterns: ["*"]
+
+  # Global npm tools (bun and friends)
+  - package-ecosystem: npm
+    directory: /global-npm-tools
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    labels: ["dependencies"]
+    commit-message:
+      prefix: chore
+    groups:
+      npm-global-tools:
+        patterns: ["*"]
